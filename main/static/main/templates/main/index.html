@@ -1,0 +1,44 @@
+{% extends 'main/base.html' %} {% load staticfiles %} {% load static %} {% load custom_filters %}
+{% block banner %} 
+<!-- Banner -->
+<div id="banner-wrapper">
+    <div class="inner">
+        <section id="banner" class="container">
+            <p>"Το ταλεντο του ανθρωπου αναπτυσσεται μεσα στην απομονωση, ο χαρακτηρας του ομως διαμορφωνεται μεσα στις τρικυμιες της ζωης.” ― Γκαιτε</p>
+        </section>
+    </div>
+</div>
+{% endblock %} {% block content %}
+<article class="box post">
+    <header>
+        <h2><strong>{{ chosen_cat_name }}</strong></h2>
+    </header>
+</article>
+<!-- Post -->
+{% for p in cat_posts_paginated %}
+<article class="box post">
+    <br/>
+    <header>
+        <h2><a href="{% url 'main:articles' post_id=p.id %}">{{ p.title }}</a></h2>
+    </header>
+    <a href="{% url 'main:articles' post_id=p.id %}" class="image featured"><img src="{{ p.image.image.url }}" alt="" style="width:auto; max-height:300px; min-width:500px;" /></a>
+    <!-- <h3> Υποτιτλος </h3>  -->
+    <p style="clear: both;">{{ p.text|trunc:100 }}</p>
+    <ul class="actions">
+        <li><a href="{% url 'main:articles' post_id=p.id %}" class="button icon fa-file">Διαβαστε περισσοτερα</a></li>
+    </ul>
+</article>
+{% endfor %}
+<div class="pagination" style="text-align: center;">
+    <span class="step-links">
+        {% if cat_posts_paginated.has_previous %}
+            <a href="?page={{ cat_posts_paginated.previous_page_number }}" class="button icon fa-arrow-left">Προηγουμενη Σελιδα</a>
+        {% endif %}
+
+        <span class="current">
+            Σελίδα {{ cat_posts_paginated.number }} απο {{ cat_posts_paginated.paginator.num_pages }}
+        </span> {% if cat_posts_paginated.has_next %}
+    <a href="?page={{ cat_posts_paginated.next_page_number }}" class="button icon fa-arrow-right">Επομενη Σελιδα</a> {% endif %}
+    </span>
+</div>
+{% endblock %}

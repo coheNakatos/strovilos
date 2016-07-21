@@ -1,6 +1,6 @@
 main/__pycache__
 manage.py
-static/
+static/*
 strovilos/__pycache__
 main/migrations
 db.sqlite3
