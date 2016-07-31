@@ -3,7 +3,6 @@ from django.db import models
 from ckeditor.fields import RichTextField
 from django.utils.html import mark_safe
 from random import randint
-from django.db.models import Max, Q
 import html
 import datetime
 
@@ -13,7 +12,7 @@ class UpImages(models.Model):
     image_title = models.CharField(blank=True, max_length=255, verbose_name='Τίτλος')
 
     def thumbnail(self):
-        return u'<img src="%s" style="max-width:150px; height:auto; max-height:150px;" />' % self.image.url
+        return u'<img src="%s"  style="max-width:150px; height:auto; max-height:150px;" />' % self.image.url
     thumbnail.short_description = 'Εικόνα'
     thumbnail.allow_tags = True
     
@@ -45,7 +44,8 @@ class Posts(models.Model):
     description = models.CharField('Περιγραφή Κειμένου' ,max_length=100, default='Placeholder', blank=True)
     category = models.ForeignKey(Category,default=0, on_delete=models.CASCADE, verbose_name='Κατηγορία')
     status = models.CharField('Κατάσταση', max_length=1, choices=STATUS_CHOICES, default='d')
-    #This is used to craft the short description of the post
+    
+    # This is used to craft the short description of the post
     def trimwords(self, s, words):
         wordsinstr = s.split()
         # In case the text is smaller in wordcount that the description.Unlikely.
@@ -56,10 +56,16 @@ class Posts(models.Model):
     def save(self, *args, **kwargs):
         self.description = self.trimwords((html.unescape(self.text)), 10)
         super(Posts, self).save(*args, **kwargs)
-
+    
+    def thumbnail(self):
+        return u'<img src="%s" id="thumb" style="max-width:150px; height:auto; max-height:150px;" />' % self.image.image.url
+    thumbnail.short_description = 'Εικόνα Κειμένου'
+    thumbnail.allow_tags = True
+    
     def __str__(self):
         return self.title
 
+    # Unescape the description so that it's in human readable form
     def unescaped(self):
         return mark_safe(self.description)
 
@@ -69,14 +75,15 @@ class Posts(models.Model):
         verbose_name = "Δημοσίευση"
         ordering = ['-pub_date']
 
+# Generates (queries) up to TIMES random (distinct) posts
 def random_posts(model):
     TIMES = 10 
     posts = []
-    max = model.objects.aggregate(Max('id'))['id__max']
+    max = model.objects.aggregate(models.Max('id'))['id__max']
     i = 0
     while i < TIMES:
         try:
-            post = model.objects.get(Q(pk=randint(1, max)) & ~Q(status='d'))
+            post = model.objects.get(models.Q(pk=randint(1, max)) & ~models.Q(status='d'))
             if post not in posts:
                 posts.append(post)
         except model.DoesNotExist:
