@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 import os
 from .secret_settings import *
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -41,6 +40,7 @@ INSTALLED_APPS = [
     'ckeditor_uploader',
     'ckeditor',
     'django_batch_uploader',
+    'huey.contrib.djhuey',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -202,7 +202,15 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
+            # TODO: Build path dynamically
             'filename': '/home/Ragan/debug.log',
+            'formatter' : 'standard',
+        },
+        'huey_file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            # TODO: Build path dynamically
+            'filename': '/home/Ragan/huey_debug.log',
             'formatter' : 'standard',
         },
         'console':{
@@ -226,6 +234,11 @@ LOGGING = {
             'handlers': ['console', 'file'],
             'level' : 'DEBUG',
         },
+        'huey.consumer': {
+            'handlers': ['huey_file'],
+            'level': 'INFO',
+            'propagate': True,
+       }
     },
 }
 
@@ -236,13 +249,24 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Europe/Athens'
-
+CACHE_PREFIX = 'PostViews_'
 
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': 'unix:/tmp/memcached.sock',
-        'TIMEOUT' : None,
-        
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'localhost:6379',
+        # 'TIMEOUT' : None,
+        'OPTIONS': {
+            'CLIENT_CLASS' : 'django_redis.client.DefaultClient',
+            'IGNORE_EXCEPTIONS': True,
+        }
     }
+}
+
+
+HUEY = {
+    'name': 'main',
+    'connection': {'host': '127.0.0.1', 'port': 6379},
+    # Options to pass into the consumer when running ``manage.py run_huey``
+    'consumer': {'workers': 3, 'worker_type': 'thread'},
 }
