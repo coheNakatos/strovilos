@@ -1,10 +1,10 @@
 from django.shortcuts import render, get_list_or_404, get_object_or_404
 from django.http import HttpResponse
-from .models import Posts, UpImages, Category, random_posts
 from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-import logging
+from .models import Posts, UpImages, Category, random_posts
 from .tasks import increasecnt 
+import logging
 
 logger = logging.getLogger('main')
 
@@ -55,7 +55,7 @@ def articles(request, post_id):
 		'side_posts' : side_posts,
 		'categories' : categories,
 	}
-	increasecnt.delay(post_id)
+	increasecnt(post_id)
 	return render(request, 'main/left-sidebar.html', context)
 
 def about(request):
