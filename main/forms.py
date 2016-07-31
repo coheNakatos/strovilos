@@ -14,7 +14,7 @@ class PostsForm(forms.ModelForm):
 	# The id change on this form field is used to assist the "thumbnails.js" script
 	class Meta:
 		model = Posts
-		exclude = ['pub_date','description']
+		exclude = ['pub_date', 'description', 'viewcount']
 	# A script to dynamically change the thumbnails in Posts' change form using Ajax and JQuery
 	class Media:
 		js=('main/assets/js/thumbnails.js',)

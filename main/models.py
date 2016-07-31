@@ -44,7 +44,8 @@ class Posts(models.Model):
     description = models.CharField('Περιγραφή Κειμένου' ,max_length=100, default='Placeholder', blank=True)
     category = models.ForeignKey(Category,default=0, on_delete=models.CASCADE, verbose_name='Κατηγορία')
     status = models.CharField('Κατάσταση', max_length=1, choices=STATUS_CHOICES, default='d')
-    
+    viewcount = models.IntegerField('Αριθμός Προβολών', default=0, blank=False)
+
     # This is used to craft the short description of the post
     def trimwords(self, s, words):
         wordsinstr = s.split()

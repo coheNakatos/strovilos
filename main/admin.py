@@ -26,7 +26,7 @@ class PostsModelAdmin(admin.ModelAdmin):
 	actions = ['publish']
 	form = PostsForm
 	# Which fields to display ( that's only for listview ) . 'unescaped' is a custom field to unescape html
-	list_display = ('title', 'pub_date','thumbnail', 'unescaped', 'author', 'status')
+	list_display = ('title', 'pub_date','thumbnail', 'unescaped', 'author', 'status', 'viewcount')
 	#list_per_page = 10
 	# That also appears when changing the object
 	readonly_fields = ('thumbnail',)
