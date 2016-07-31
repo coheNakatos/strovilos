@@ -1,2 +1,2 @@
-memcached
+redis
 python3-devel-3
