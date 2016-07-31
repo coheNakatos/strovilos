@@ -1,9 +1,9 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import User
 from .models import Posts, UpImages, Category
 from .forms import UpImagesForm, PostsForm
-from django.contrib.auth.models import User
-from django.utils.html import mark_safe
+from django_batch_uploader.admin import BaseBatchUploadAdmin
 
 admin.site.index_title = ' '
 
@@ -11,10 +11,11 @@ admin.site.register(Category)
 
 # model.save() method cannot does not have access to the request data structure 
 # so this overriden method is the optimal way to change the 'uploaded_by' field 
-class UpImagesModelAdmin(admin.ModelAdmin):
+class UpImagesModelAdmin(BaseBatchUploadAdmin):
     def save_model(self, request, obj, form, change):
         obj.uploaded_by = request.user
         obj.save()
+    batch_url_name = "admin_image_batch_view"
     form = UpImagesForm
     list_per_page = 10
     list_display = ('image_title', 'thumbnail')
@@ -24,11 +25,12 @@ admin.site.register(UpImages, UpImagesModelAdmin)
 class PostsModelAdmin(admin.ModelAdmin):
 	actions = ['publish']
 	form = PostsForm
-	# Which fields to display . 'unescaped' is a custom field to unescape html
-	list_display = ('title', 'pub_date', 'unescaped', 'author', 'status')
-	list_per_page = 10
+	# Which fields to display ( that's only for listview ) . 'unescaped' is a custom field to unescape html
+	list_display = ('title', 'pub_date','thumbnail', 'unescaped', 'author', 'status')
+	#list_per_page = 10
+	# That also appears when changing the object
+	readonly_fields = ('thumbnail',)
 	search_fields = ['title']
-
 	def publish(self, request, queryset):
 		rows_updated = queryset.update(status='p')
 		if rows_updated == 1:
