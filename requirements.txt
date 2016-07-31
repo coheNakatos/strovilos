@@ -1,0 +1,15 @@
+Django==1.9.7
+psycopg2==2.6.1
+django-batch-uploader==0.13
+django-ckeditor==5.0.3
+django-grappelli==2.8.1
+Pillow==3.3.0
+python-memcached==1.58
+redis==2.10.5
+celery==3.1.18
+amqp==1.4.9
+anyjson==0.3.3
+billiard==3.3.0.23
+kombu==3.0.35
+pytz==2016.6.1
+six==1.10.0
