@@ -1,44 +1,69 @@
-{% extends 'main/base.html' %} {% load staticfiles %} {% load static %} {% load custom_filters %}
-{% block banner %} 
+{% extends 'main/base.html' %}
+{% load custom_filters %}
+
+<!-- This should be deleted soon -->
+<!-- {% block banner %}  -->
 <!-- Banner -->
-<div id="banner-wrapper">
+<!-- <div id="banner-wrapper">
     <div class="inner">
         <section id="banner" class="container">
             <p>"Το ταλεντο του ανθρωπου αναπτυσσεται μεσα στην απομονωση, ο χαρακτηρας του ομως διαμορφωνεται μεσα στις τρικυμιες της ζωης.” ― Γκαιτε</p>
         </section>
     </div>
 </div>
-{% endblock %} {% block content %}
+ {% endblock %}--> 
+{% block content %}
 <article class="box post">
     <header>
-        <h2><strong>{{ chosen_cat_name }}</strong></h2>
+        <h2 class="section-header">{{ chosen_cat_name }}</h2>
     </header>
 </article>
 <!-- Post -->
 {% for p in cat_posts_paginated %}
-<article class="box post">
-    <br/>
-    <header>
-        <h2><a href="{% url 'main:articles' post_id=p.id %}">{{ p.title }}</a></h2>
+<article class="box post c-post">
+    <a href="{% url 'main:articles' post_id=p.id %}" class="image featured c-post__img">
+        <img src="{{ p.image.image.url }}" alt=""/>
+    </a>
+    <header class="c-post__head">
+        <h2><a href="{% url 'main:articles' post_id=p.id %}">{{ p.title|trunc:8 }}</a></h2>
     </header>
-    <a href="{% url 'main:articles' post_id=p.id %}" class="image featured"><img src="{{ p.image.image.url }}" alt="" style="width:auto; max-height:300px; min-width:500px;" /></a>
-    <!-- <h3> Υποτιτλος </h3>  -->
-    <p style="clear: both;">{{ p.text|trunc:100 }}</p>
-    <ul class="actions">
-        <li><a href="{% url 'main:articles' post_id=p.id %}" class="button icon fa-file">Διαβαστε περισσοτερα</a></li>
+    <div class="c-post__desc">{{ p.text|trunc:45 }}</div>
+    <ul class="actions c-post__view">
+        <li><a href="{% url 'main:articles' post_id=p.id %}" class="c-btn c-btn--secondary">Διαβαστε περισσοτερα</a></li>
     </ul>
 </article>
 {% endfor %}
-<div class="pagination" style="text-align: center;">
-    <span class="step-links">
-        {% if cat_posts_paginated.has_previous %}
-            <a href="?page={{ cat_posts_paginated.previous_page_number }}" class="button icon fa-arrow-left">Προηγουμενη Σελιδα</a>
-        {% endif %}
+{% endblock%}
 
-        <span class="current">
-            Σελίδα {{ cat_posts_paginated.number }} απο {{ cat_posts_paginated.paginator.num_pages }}
-        </span> {% if cat_posts_paginated.has_next %}
-    <a href="?page={{ cat_posts_paginated.next_page_number }}" class="button icon fa-arrow-right">Επομενη Σελιδα</a> {% endif %}
-    </span>
-</div>
+{% block pagination %}
+{% if not cat_posts_paginated.paginator.num_pages == 1 %}
+    <section>
+        <!--TODO: add this to css file -->
+        <h2 style="text-transform:none;">Επόμενες Σελίδες</h2>
+        <nav role="navigation">
+            <ul class="cd-pagination no-space custom-buttons">
+                {% if not cat_posts_paginated.has_previous %}
+                    <li class="button"><a class="disabled" href="#">Prev</a></li>
+                    <li><a class="current" href="#">1</a></li>
+                    <li><span>...</span></li>
+                    <li><a href="?page={{ cat_posts_paginated.paginator.num_pages }}">{{ cat_posts_paginated.paginator.num_pages }}</a></li>
+                    <li class="button"><a href="?page={{ cat_posts_paginated.next_page_number }}">Next</a></li>
+                {% else %}
+                    <li class="button"><a href="?page={{ cat_posts_paginated.previous_page_number }}">Prev</a></li>
+                    <li><a href="?page=1">1</a></li>
+                    {% if not cat_posts_paginated.number == 2 %}<li><span>...</span></li> {% endif %}        
+                    <li><a class="current" href="?page={{ cat_posts_paginated.number }}">{{ cat_posts_paginated.number }}</a></li>
+                    {% if cat_posts_paginated.has_next %}
+                        {% if not cat_posts_paginated.next_page_number == cat_posts_paginated.paginator.num_pages %}<li><span>...</span></li> {% endif %}
+                        <li><a href="?page={{ cat_posts_paginated.paginator.num_pages }}">{{ cat_posts_paginated.paginator.num_pages }}</a></li>
+                        <li class="button"><a href="?page={{ cat_posts_paginated.next_page_number }}">Next</a></li>    
+                    {% else %}
+                        <li class="button"><a class="disabled" href="#">Next</a></li>
+                    {% endif %}
+                {% endif %}
+                
+            </ul>
+        </nav> <!-- cd-pagination-wrapper -->
+    </section>
+{% endif %}
 {% endblock %}
