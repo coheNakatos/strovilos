@@ -17,7 +17,7 @@ def index(request, category_id=None):
 		chosen_cat_name = get_object_or_404(Category, pk=category_id)
 	else:
 		chosen_cat_name = "Στροβιλος"
-		category_posts = Posts.objects.all()
+		category_posts = Posts.objects.exclude(Q(status='d'))
 	
 	# Check if the main posts are also recent posts so we don't show them twice
 	# for post in category_posts:
