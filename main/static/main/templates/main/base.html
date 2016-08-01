@@ -65,7 +65,7 @@
                                         <a href="{% url 'main:articles' post_id=p.id %}" class="image left"><img src="{{p.image.image.url }}" alt="" /></a>
                                         <div class="c-slider__text">
                                             <h3><a href="{% url 'main:articles' post_id=p.id %}">{{ p.title|trunc:10 }}</a></h3>
-                                            <p>{{ p.text|striptags|trunc:28 }}</p>
+                                            <p>{{ p.text|trunc:28 }}</p>
                                             <a href="{% url 'main:articles' post_id=p.id %}" class="c-slider__btn c-btn">Συνεχιστε Εδω</a>
                                         </div>
                                     </article>
@@ -83,14 +83,10 @@
                 </div>
                 <div class="row">
                     <!-- Content -->
-                    <div id="content" class="12u(mobile)">
-                        {% block content %} 
-                        {% endblock %}
-                    </div>
+                    {% block content %} 
+                    {% endblock %}
                     {% block pagination %}
                     {% endblock %}
-                    <!-- Sidebar -->
-                    
                 </div>
             </div>
         </div>
