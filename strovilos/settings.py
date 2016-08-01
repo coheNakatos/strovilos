@@ -10,8 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 import os
+from os.path import expanduser
 from .secret_settings import *
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+home = expanduser("~")
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -203,14 +205,14 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
             # TODO: Build path dynamically
-            'filename': '/home/Ragan/debug.log',
+            'filename': os.path.join(home, 'debug.log'),
             'formatter' : 'standard',
         },
         'huey_file': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
             # TODO: Build path dynamically
-            'filename': '/home/Ragan/huey_debug.log',
+            'filename': os.path.join(home, 'huey_debug.log'),
             'formatter' : 'standard',
         },
         'console':{
