@@ -8,7 +8,7 @@ import logging
 logger = logging.getLogger('huey.consumer')
 
 # This is necessary in order to get the right RedisHuey instance.
-huey = RedisHuey('main')
+huey = RedisHuey('main', password = 'zWm$8j3;%_0b8y^^%8xA5EOVWy2B')
 
 @huey.periodic_task(crontab(minute='*/1'))
 def viewcountupdate():

@@ -245,30 +245,23 @@ LOGGING = {
 }
 
 
-BROKER_URL = 'redis://localhost:6379'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'Europe/Athens'
 CACHE_PREFIX = 'PostViews_'
 
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'localhost:6379',
-        # 'TIMEOUT' : None,
+        'LOCATION': 'redis://:zWm$8j3;%_0b8y^^%8xA5EOVWy2B@localhost:6379',
         'OPTIONS': {
             'CLIENT_CLASS' : 'django_redis.client.DefaultClient',
             'IGNORE_EXCEPTIONS': True,
         }
     }
 }
-
-
 HUEY = {
     'name': 'main',
-    'connection': {'host': '127.0.0.1', 'port': 6379},
+    'connection' : { 'password' : 'zWm$8j3;%_0b8y^^%8xA5EOVWy2B',},
     # Options to pass into the consumer when running ``manage.py run_huey``
     'consumer': {'workers': 3, 'worker_type': 'thread'},
 }
+
+
