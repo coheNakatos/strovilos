@@ -6,11 +6,11 @@ $(document).ready( function ()
 	{
 		var option = $ (this).find('option:selected').text()
 		if (option !== "---------" ){ 
-			// TODO: Change that when we upload the server
-			$.ajax({url:"http://localhost:8000/ajax?title="+option,
+			// TODO: Change that when we upload the server. Add domain name instead of ip!
+			$.ajax({url:"http://139.59.175.70/ajax?title="+option,
 			            success:function(result) {
 							if ($('#thumb').length){
-								$('#thumb').attr('src',"http://localhost:8000"+result);
+								$('#thumb').attr('src',"http://139.59.175.70"+result);
 			            	}
 			            	else
 			            	{
@@ -22,6 +22,7 @@ $(document).ready( function ()
 			                
 			            },
 			            dataType:"text",
+				    crossDomain: true,
 			            type:"get"
 			        }
 			    );
