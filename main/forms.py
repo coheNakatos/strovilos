@@ -1,13 +1,8 @@
 from django import forms
-from .models import UpImages, Posts
+from .models import Posts
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from django.contrib.auth.models import User
 
-class UpImagesForm(forms.ModelForm):
-
-    class Meta:
-        model = UpImages
-        exclude = ['uploaded_by',]
 
 class PostsForm(forms.ModelForm):
 	text = forms.CharField(widget=CKEditorUploadingWidget(), label='Κείμενο')

@@ -2,13 +2,12 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 from .models import Posts, UpImages, Category, BodyText
-from .forms import UpImagesForm, PostsForm
+from .forms import PostsForm
 from django_batch_uploader.admin import BaseBatchUploadAdmin
 
 admin.site.index_title = ' '
 
 admin.site.register(Category)
-admin.site.register(BodyText)
 
 # model.save() method cannot does not have access to the request data structure 
 # so this overriden method is the optimal way to change the 'uploaded_by' field 
@@ -17,7 +16,8 @@ class UpImagesModelAdmin(BaseBatchUploadAdmin):
         obj.uploaded_by = request.user
         obj.save()
     batch_url_name = "admin_image_batch_view"
-    form = UpImagesForm
+    # This removes the following fields from both add and change forms
+    exclude = ['uploaded_by',]
     list_per_page = 10
     list_display = ('image_title', 'thumbnail')
     search_fields = ['image_title']
@@ -83,3 +83,13 @@ class UserModelAdmin(UserAdmin):
 			return super(UserModelAdmin, self).change_view(request, *args, **kwargs)
 
 admin.site.register(User,UserModelAdmin)
+
+class BodyTextAdmin(admin.ModelAdmin):
+	def get_form(self, request, obj=None, **kwargs):
+		# If obj is not None it means we are in the change form
+		# In that case hide "description"
+		if obj:
+			kwargs['exclude'] = ['description',]
+		return super(BodyTextAdmin, self).get_form(request, obj, **kwargs)
+
+admin.site.register(BodyText, BodyTextAdmin)
