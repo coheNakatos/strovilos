@@ -1,13 +1,14 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
-from .models import Posts, UpImages, Category
+from .models import Posts, UpImages, Category, BodyText
 from .forms import UpImagesForm, PostsForm
 from django_batch_uploader.admin import BaseBatchUploadAdmin
 
 admin.site.index_title = ' '
 
 admin.site.register(Category)
+admin.site.register(BodyText)
 
 # model.save() method cannot does not have access to the request data structure 
 # so this overriden method is the optimal way to change the 'uploaded_by' field 
@@ -82,4 +83,3 @@ class UserModelAdmin(UserAdmin):
 			return super(UserModelAdmin, self).change_view(request, *args, **kwargs)
 
 admin.site.register(User,UserModelAdmin)
-

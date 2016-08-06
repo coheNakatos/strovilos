@@ -76,6 +76,18 @@ class Posts(models.Model):
         verbose_name = "Δημοσίευση"
         ordering = ['-pub_date']
 
+
+class BodyText(models.Model):
+    text = models.TextField('Κείμενο', blank=False)
+    description = models.CharField('Τοποθεσία Παρόντος Κειμένου', max_length=255)
+    author = models.CharField('Ποίος Το Είπε', blank=False, max_length=255)
+    def __str__(self):
+        return self.description
+
+    class Meta:
+        verbose_name = "Κείμενο Σελίδας"
+        verbose_name_plural = "Κείμενα Σελίδας"
+
 # Generates (queries) up to TIMES random (distinct) posts
 def random_posts(model):
     TIMES = 10 
