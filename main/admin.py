@@ -41,8 +41,6 @@ class PostsModelAdmin(admin.ModelAdmin):
 		self.message_user(request, "%s Επιτυχώς" % message_bit)
 	
 	publish.short_description = 'Δημοσίευση επιλεγμένων άρθρων'
-	
-
 admin.site.register(Posts, PostsModelAdmin)
 
 # This is used to make some fields available in User Admin Forms

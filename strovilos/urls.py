@@ -26,4 +26,4 @@ urlpatterns = [
     url(r'^ckeditor/', include('ckeditor_uploader.urls')),
     url( r'admin/media/images/batch/$', ImageBatchView.as_view(), name="admin_image_batch_view"),     
 
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]

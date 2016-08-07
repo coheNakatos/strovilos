@@ -58,10 +58,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.request',
-                'django.core.context_processors.media',
                 'django.template.context_processors.static',
-                'main.context_processors.logo_and_bodytexts',
-
             ],
         },
     },
