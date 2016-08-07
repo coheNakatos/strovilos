@@ -62,7 +62,7 @@
                         <a href="{% url 'main:articles' post_id=p.id %}" class="image left"><img src="{{p.image.image.url }}" alt="" style="max-width:200px; height:auto; max-height:200px;" /></a>
                         {{ p.text|trunc:28 }}
                         <ul class="actions">
-                            <li><a href="{% url 'main:articles' post_id=p.id %}" class="button icon fa-file">Συνεχιστε Εδω</a></li>
+                            <li><a href="{% url 'main:articles' post_id=p.id %}" class="c-btn c-btn--secondary">Συνεχιστε Εδω</a></li>
                         </ul>
                     </article>
                 </li>

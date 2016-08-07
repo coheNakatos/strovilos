@@ -23,7 +23,7 @@
     <script src="{% static "main/assets/js/modernizr.js " %}"></script> <!-- Modernizr -->
 
     <!-- This should be served by the webserver, not django -->
-    <link rel="shortcut icon" type="image/png" href="{{STATIC_URL}}main/images/fav.png"/>
+    <link rel="shortcut icon" type="image/png" href="/favicon.png"/>
 
     <!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
 </head>
@@ -76,7 +76,7 @@
                     </div>
 
                     <div class="c-quote">
-                        <h2 class="section-header">Είπαν καπότε</h2>
+                        <h2 class="section-header">Είπαν κάποτε</h2>
                         <h3>{{ quote.text }}</h3>
                         <p class="c-quote__author"> <span style="font-size:15px">&mdash;</span> {{ quote.author }}</p>
                     </div>
