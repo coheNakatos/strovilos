@@ -1,8 +1,7 @@
 // A js file to dynamically change the thumbnails on Posts' admin page
 $(document).ready( function ()
 {
-	$('#id_image').attr('id', 'thumbajax');
-	$('#thumbajax').change(function()
+	$('#id_image').change(function()
 	{
 		var option = $ (this).find('option:selected').text()
 		if (option !== "---------" ){ 
