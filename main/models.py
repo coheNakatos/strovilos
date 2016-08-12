@@ -2,9 +2,12 @@ from django.contrib.auth.models import User
 from django.db import models
 from ckeditor.fields import RichTextField
 from django.utils.html import mark_safe
-from random import randint
+from PIL import Image
+
 import html
 import datetime
+import logging
+logger = logging.getLogger('main')
 
 class UpImages(models.Model):
     image = models.ImageField(blank=False, upload_to='images/%Y/%m/%d/')
@@ -18,44 +21,47 @@ class UpImages(models.Model):
     
     def __str__(self):
         return self.image_title
-
+    
+    def save(self, *args, **kwargs):
+        super(UpImages, self).save()
+        imagepath = self.image.path
+        image = Image.open(imagepath)
+        image.save(imagepath, "JPEG", quality=30, optimize=True)
+    
+    def delete(self):
+        if not self.image:
+            self.image.delete()
+        super(UpImages, self).delete()
+    
     class Meta:
         verbose_name = "Εικόνα"
         verbose_name_plural = "Εικόνες"
 
 class Category(models.Model):
-    name = models.CharField('Όνομα Κατηγορίας', max_length=100, default='Γενικά', blank=False)
+    name = models.CharField('Όνομα Κατηγορίας', max_length=100, blank=False)
     def __str__(self):
         return self.name
     class Meta:
-        verbose_name_plural =  "Κατηγορίες"
         verbose_name = "Κατηγορία"
+        verbose_name_plural =  "Κατηγορίες"
 
 class Posts(models.Model):
     STATUS_CHOICES = (
         ('p', 'Δημοσιευμένο'),
         ('d', 'Πρόχειρο'),
-        )
+    )
     text = RichTextField("Κείμενο", blank=False)
     pub_date = models.DateTimeField('Ημερομηνία Ανάρτησης', default=datetime.datetime.now)
     image = models.ForeignKey(UpImages, on_delete=models.CASCADE, verbose_name='Εικόνα')
     title = models.CharField('Τίτλος' ,max_length=255)
     author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Αρθρογράφος')
-    description = models.CharField('Περιγραφή Κειμένου' ,max_length=100, default='Placeholder', blank=True)
-    category = models.ForeignKey(Category,default=0, on_delete=models.CASCADE, verbose_name='Κατηγορία')
+    category = models.ForeignKey(Category,default=0, on_delete=models.CASCADE, verbose_name='Κατηγορία', blank=False)
     status = models.CharField('Κατάσταση', max_length=1, choices=STATUS_CHOICES, default='d')
-    viewcount = models.IntegerField('Αριθμός Προβολών', default=0, blank=False)
-
-    # This is used to craft the short description of the post
-    def trimwords(self, s, words):
-        wordsinstr = s.split()
-        # In case the text is smaller in wordcount that the description.Unlikely.
-        if words > len(wordsinstr): 
-            return ' '.join(wordsinstr)
-        return(' '.join(s.split()[:words])) + '...</p>'
+    viewcount = models.IntegerField('Αριθμός Προβολών', default=0)
 
     def save(self, *args, **kwargs):
-        self.description = self.trimwords((html.unescape(self.text)), 10)
+        # This is extremelly unsafe.
+        self.text = html.unescape(self.text)
         super(Posts, self).save(*args, **kwargs)
     
     def thumbnail(self):
@@ -66,11 +72,6 @@ class Posts(models.Model):
     def __str__(self):
         return self.title
 
-    # Unescape the description so that it's in human readable form
-    def unescaped(self):
-        return mark_safe(self.description)
-
-    unescaped.short_description = description.verbose_name 
     class Meta:
         verbose_name_plural = "Δημοσιεύσεις"
         verbose_name = "Δημοσίευση"
@@ -81,25 +82,10 @@ class BodyText(models.Model):
     text = models.TextField('Κείμενο', blank=False)
     description = models.CharField('Τοποθεσία Παρόντος Κειμένου', max_length=255)
     author = models.CharField('Ποίος Το Είπε', blank=False, max_length=255)
+    
     def __str__(self):
         return self.description
 
     class Meta:
         verbose_name = "Κείμενο Σελίδας"
         verbose_name_plural = "Κείμενα Σελίδας"
-
-# Generates (queries) up to TIMES random (distinct) posts
-def random_posts(model):
-    TIMES = 10 
-    posts = []
-    max = model.objects.aggregate(models.Max('id'))['id__max']
-    i = 0
-    while i < TIMES:
-        try:
-            post = model.objects.get(models.Q(pk=randint(1, max)) & ~models.Q(status='d'))
-            if post not in posts:
-                posts.append(post)
-        except model.DoesNotExist:
-            pass
-        i += 1
-    return posts

@@ -1,7 +1,6 @@
 from django import forms
 from .models import Posts
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
-from django.contrib.auth.models import User
 
 
 class PostsForm(forms.ModelForm):
@@ -14,3 +13,23 @@ class PostsForm(forms.ModelForm):
 	class Media:
 		js=('main/assets/js/thumbnails.js',)
 
+class ContactForm(forms.Form):
+	
+	# Overriding the error_messages
+	greek_errors_mail = {
+		'required' : 'Αυτό το πεδίο είναι απαραίτητο',
+		'invalid'  : 'Μη αποδεκτό email',
+	}
+	greek_errors = {
+		'required' : 'Αυτό το πεδίο είναι απαραίτητο',
+	}
+	name = forms.CharField(required=True, error_messages=greek_errors)
+	subject = forms.CharField(required=True, error_messages=greek_errors)
+	email = forms.EmailField(required=True, error_messages=greek_errors_mail)
+	message = forms.CharField(
+		max_length = 500,
+		required = True,
+		error_messages = greek_errors,
+		)
+	# This is supposed to be empty.
+	pot = forms.CharField(required=False)

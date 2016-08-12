@@ -1,16 +1,20 @@
-from huey import RedisHuey
-from huey.contrib.djhuey import crontab, periodic_task, task
 from django.core.cache import cache as redis_cache
-from django.conf import settings
-from .models import Posts
+from django.core.mail import EmailMultiAlternatives
 from django.db import transaction, IntegrityError
+from django.conf import settings
+
+from huey.contrib.djhuey import crontab
+from huey import RedisHuey
+
+from .models import Posts
 import logging
+
 logger = logging.getLogger('huey.consumer')
 
 # This is necessary in order to get the right RedisHuey instance.
-huey = RedisHuey('main', password = 'zWm$8j3;%_0b8y^^%8xA5EOVWy2B')
+huey = RedisHuey('main', password = settings.CACHE_PASSWORD)
 
-@huey.periodic_task(crontab(minute='*/1'))
+@huey.periodic_task(crontab(hour='*/1'))
 def viewcountupdate():
 	# This is the prefix we are going to use to distinguish the cache keys
 	# we need for the view counters
@@ -51,3 +55,21 @@ def increasecnt(post_id):
 
 def prefixing(prefix, post_id):
 	return prefix + str(post_id)	
+
+@huey.task()
+def async_mail(form):
+	name = form.cleaned_data['name']
+	email_addr = form.cleaned_data['email']
+	message = form.cleaned_data['message']
+	subject = form.cleaned_data['subject']
+	email = EmailMultiAlternatives(
+		subject = subject,
+		body = message,
+		from_email = name + "<" + settings.DEFAULT_FROM_EMAIL + ">",
+		to = [settings.DEFAULT_TO_EMAIL],
+		headers = {"Reply-To" : email_addr}
+		)
+	logger.warn("Subject: {0}".format(subject))
+	logger.warn("From: {0} -> Reply-To: {1}".format(name, email_addr))
+	logger.warn("Body: {0}".format(message))
+	email.send()
