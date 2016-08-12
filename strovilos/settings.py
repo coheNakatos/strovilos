@@ -1,20 +1,33 @@
 """
+
 Django settings for strovilos project.
 
 """
 import os
 from .secret_settings import *
 
+########################################################################################################
+######################################## Basic/Custom Settings #########################################
+########################################################################################################
+# Custom Variables 
+POSTS_PER_PAGE = 4
+TITLE_COUNT = 10
+DESC_COUNT = 28
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 # Virtualenv DIR
 ROOT_DIR = os.path.dirname(BASE_DIR)
 
+# Static files (CSS, JavaScript, Images)
+# ROOT paths are set in secret_settings
+STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
-ALLOWED_HOSTS = []
+DEBUG = False
+ALLOWED_HOSTS = ['139.59.175.70',]
 
 
 # Application definition
@@ -32,6 +45,7 @@ INSTALLED_APPS = [
     'ckeditor',
     'django_batch_uploader',
     'huey.contrib.djhuey',
+    'compressor',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -49,7 +63,6 @@ MIDDLEWARE_CLASSES = [
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-#        'DIRS': [os.path.join(BASE_DIR, 'main/static/main/templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -59,10 +72,17 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.request',
                 'django.template.context_processors.static',
+                'main.context_processors.global_settings',
             ],
         },
     },
 ]
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',
+)
 
 ROOT_URLCONF = 'strovilos.urls'
 WSGI_APPLICATION = 'strovilos.wsgi.application'
@@ -85,98 +105,20 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Cache Settings
 
-# Internationalization
-
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = None 
-
-USE_I18N = True
-
-USE_L10N = True
-
-USE_TZ = False
-
-
-# Static files (CSS, JavaScript, Images)
-# ROOT paths are set in secret_settings
-STATIC_URL = '/static/'
-MEDIA_URL = '/media/'
-
-# Grappeli Settings 
-GRAPPELLI_ADMIN_TITLE = 'Επεξεργασία Ιστοσελίδας'
-GRAPPELLI_SWITCH_USER = True
-
-# CKEditor Settings
-CKEDITOR_JQUERY_URL = '//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js'
-
-CKEDITOR_UPLOAD_PATH = "images/"
-
-CKEDITOR_CONFIGS = {
+CACHE_PREFIX = 'PostViews_'
+CACHES = {
     'default': {
-        'skin': 'moono',
-        # 'skin': 'office2013',
-        'toolbar_Basic': [
-            ['Source', '-', 'Bold', 'Italic']
-        ],
-        'toolbar_YourCustomToolbarConfig': [
-            {'name': 'document', 'items': ['Source', '-', 'Save', 'NewPage', 'Preview', 'Print', '-', 'Templates']},
-            {'name': 'clipboard', 'items': ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo']},
-            {'name': 'editing', 'items': ['Find', 'Replace', '-', 'SelectAll']},
-            {'name': 'forms',
-             'items': ['Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton',
-                       'HiddenField']},
-            '/',
-            {'name': 'basicstyles',
-             'items': ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat']},
-            {'name': 'paragraph',
-             'items': ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-',
-                       'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl',
-                       'Language']},
-            {'name': 'links', 'items': ['Link', 'Unlink', 'Anchor']},
-            {'name': 'insert',
-             'items': ['Image', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe']},
-            '/',
-            {'name': 'styles', 'items': ['Styles', 'Format', 'Font', 'FontSize']},
-            {'name': 'colors', 'items': ['TextColor', 'BGColor']},
-            {'name': 'tools', 'items': ['Maximize', 'ShowBlocks']},
-            {'name': 'about', 'items': ['About']},
-            '/',  # put this to force next toolbar on new line
-            {'name': 'yourcustomtools', 'items': [
-                # put the name of your editor.ui.addButton here
-                'Preview',
-                'Maximize',
-
-            ]},
-        ],
-        'toolbar': 'YourCustomToolbarConfig',  # put selected toolbar config here
-         'toolbarGroups': [{ 'name': 'document', 'groups': [ 'mode', 'document', 'doctools' ] }],
-         'height': 291,
-         'width': '100%',
-         'filebrowserWindowHeight': 725,
-         'filebrowserWindowWidth': 940,
-         'toolbarCanCollapse': True,
-         'mathJaxLib': '//cdn.mathjax.org/mathjax/2.2-latest/MathJax.js?config=TeX-AMS_HTML',
-        'tabSpaces': 4,
-        'extraPlugins': ','.join(
-            [
-                # your extra plugins here
-                'div',
-                'autolink',
-                'autoembed',
-                'embedsemantic',
-                'autogrow',
-                # 'devtools',
-                'widget',
-                'lineutils',
-                'clipboard',
-                'dialog',
-                'dialogui',
-                'elementspath'
-            ]),
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://:'+ CACHE_PASSWORD +'@localhost:6379',
+        'OPTIONS': {
+            'CLIENT_CLASS' : 'django_redis.client.DefaultClient',
+            'IGNORE_EXCEPTIONS': True,
+        }
     }
 }
+
 
 # Logging Settings
 
@@ -198,7 +140,7 @@ LOGGING = {
         },
         'huey_file': {
             'level': 'WARN',
-	    'class': 'logging.FileHandler',
+        'class': 'logging.FileHandler',
             'filename': os.path.join(ROOT_DIR, 'log/huey_debug.log'),
             'formatter' : 'standard',
         },
@@ -231,25 +173,112 @@ LOGGING = {
     },
 }
 
-# Cache Settings
+# Internationalization
 
-CACHE_PREFIX = 'PostViews_'
+LANGUAGE_CODE = 'en-us'
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://:zWm$8j3;%_0b8y^^%8xA5EOVWy2B@localhost:6379',
-        'OPTIONS': {
-            'CLIENT_CLASS' : 'django_redis.client.DefaultClient',
-            'IGNORE_EXCEPTIONS': True,
-        }
-    }
-}
-# Huey Consumer Settings
+TIME_ZONE = None 
+
+USE_I18N = True
+
+USE_L10N = True
+
+USE_TZ = False
+
+
+
+
+########################################################################################################
+######################################## Installed Apps Settings #######################################
+########################################################################################################
+
+# Compress 
+COMPRESS_ENABLED = True
+COMPRESS_CSS_FILTERS = [
+	'compressor.filters.css_default.CssAbsoluteFilter',
+	'compressor.filters.cssmin.rCSSMinFilter',
+]
+
+# Email Agent Setup
+# Uncomment this for testing
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = "sgbackend.SendGridBackend"
+EMAIL_HOST = 'smtp.sendgrid.net'
+SENDGRID_USER = 'linosgian'
+SENDGRID_PASSWORD = '558FFXQ%P^Fm&4%b0%0bk78RY'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = SENDGRID_USER + '@sendgrip.com'
+DEFAULT_TO_EMAIL = 'kgstrovilos@gmail.com'
+# Huey Consumer
 
 HUEY = {
     'name': 'main',
-    'connection' : { 'password' : 'zWm$8j3;%_0b8y^^%8xA5EOVWy2B',},
-    # Options to pass into the consumer when running ``manage.py run_huey``
+    'connection' : { 'password' : CACHE_PASSWORD,},
     'consumer': {'workers': 1, 'worker_type': 'thread'},
+}
+
+# Grappeli  
+
+# Enable this to switch between users in admin
+# GRAPPELLI_SWITCH_USER = True
+GRAPPELLI_ADMIN_TITLE = 'Επεξεργασία Ιστοσελίδας'
+
+# CKEditor 
+
+CKEDITOR_JQUERY_URL = '//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js'
+CKEDITOR_UPLOAD_PATH = "images/"
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        #'skin': 'moono',
+        'skin': 'office2013',
+        'toolbar_Basic': [
+            ['Source', '-', 'Bold', 'Italic']
+        ],
+        'toolbar_YourCustomToolbarConfig': [
+            {'name': 'document', 'items': ['Source', '-', 'NewPage', 'Preview', 'Print', '-', 'Templates']},
+            {'name': 'clipboard', 'items': ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo']},
+            {'name': 'editing', 'items': ['Find', 'Replace' ]},
+            '/',
+            {'name': 'basicstyles',
+             'items': ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat']},
+            {'name': 'paragraph',
+             'items': ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote',  '-',
+                       'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl',
+                       'Language']},
+            {'name': 'links', 'items': ['Link', 'Unlink', 'Anchor']},
+            {'name': 'insert',
+             'items': ['Image', 'Table', 'HorizontalRule', 'SpecialChar', 'PageBreak']},
+            '/',
+            {'name': 'styles', 'items': ['Styles', 'Format', 'Font', 'FontSize']},
+            {'name': 'colors', 'items': ['TextColor', 'BGColor']},
+            {'name': 'tools', 'items': ['Maximize']}, 
+        ],
+        'toolbar': 'YourCustomToolbarConfig',
+         'toolbarGroups': [{ 'name': 'document', 'groups': [ 'mode', 'document', 'doctools' ] }],
+         'height': 291,
+         'width': '100%',
+         'filebrowserWindowHeight': 725,
+         'filebrowserWindowWidth': 940,
+         'toolbarCanCollapse': True,
+         'mathJaxLib': '//cdn.mathjax.org/mathjax/2.2-latest/MathJax.js?config=TeX-AMS_HTML',
+        'tabSpaces': 4,
+        'extraPlugins': ','.join(
+            [
+                'div',
+                'autolink',
+                'autoembed',
+                'embedsemantic',
+                #'autogrow',
+                #'devtools',
+                'widget',
+                'lineutils',
+                'clipboard',
+                'dialog',
+                'dialogui',
+                'elementspath'
+            ]),
+        'removePlugins': 'smiley',
+    }
 }
