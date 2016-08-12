@@ -9,3 +9,6 @@ urlpatterns = [
     url(r'^ckeditor/', include('ckeditor_uploader.urls')),
     url( r'admin/media/images/batch/$', ImageBatchView.as_view(), name="admin_image_batch_view"),     
 ]
+handler404 = 'main.views.handler404'
+
+handler500 = 'main.views.handler500'

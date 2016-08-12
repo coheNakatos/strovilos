@@ -1,0 +1,45 @@
+body {
+	background: url("../css/img/van.jpg") no-repeat center center fixed;
+	background-repeat: no-repeat;
+	font-family: 'GFS Didot', serif;
+	background-size: cover;
+}
+
+.message {
+	text-align: center;
+	color:#fff;
+	font-weight: 600;
+    font-size: xx-large;
+}
+.message::before {
+	content: "\2983";
+	padding-right: 10px;
+	vertical-align: 6%
+}
+.message::after {
+	content: "\2984";
+	padding-left: 10px;
+
+}
+
+.quote {
+	position: absolute;
+	right:100px;
+	bottom: 100px;
+	font-size: 27px;
+	font-style: italic;
+
+}
+.quote__text {
+	color:#fff;
+	text-align: end;	
+}
+
+.quote__author {
+	color:#fff;
+	text-align: end;	
+}
+.quote__author::before {
+	content: "\2014";
+	color:#fff;	
+}
