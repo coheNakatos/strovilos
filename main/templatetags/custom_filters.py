@@ -1,13 +1,14 @@
-from django.template.defaultfilters import truncatewords, safe, stringfilter, removetags
+from django.template.defaultfilters import truncatewords, stringfilter, removetags
 from django import template
+from django.utils.safestring import mark_safe
 
 register = template.Library()
 
-# custom filter to truncatewords/remove img tags and unescape html.
+# custom filter to truncatewords/remove some tags and unescape html.
 # TODO: ADD remove tags!
 @register.filter
 def trunc(value, arg):
-	return truncatewords(removetags(safe(value), 'img h3'), arg) 
+	return truncatewords(removetags(mark_safe(value), 'img h3 h1 h2 h4 h5 h6 strong'), arg) 
 
 @register.filter
 @stringfilter
