@@ -1,54 +1,45 @@
 {% extends 'main/base.html' %}
 {% load custom_filters %}
 
-{% block content %}
-<!-- Post -->
-<div id="content" class="12u(mobile)" style="float:left;  width:70%; ">
-    <article class="box post">
-        <header>
-            <h2>{{ main_post.title }}</h2>
-        </header>
-        <span class="image featured"><img src="{{ main_post.image.image.url }}" alt="" /></span> 
-        <div class="pic" style="clear:both;">{{ main_post.text|safe}}</div>
-        <p>Phasellus laoreet massa id justo mattis pharetra. Fusce suscipit ligula vel quam viverra sit amet mollis tortor congue. Sed quis mauris sit amet magna accumsan tristique. Curabitur leo nibh, rutrum eu malesuada in, tristique at erat lorem ipsum dolor sit amet lorem ipsum sed consequat consequat magna tempus lorem ipsum consequat Phasellus laoreet massa id in, tristique at erat lorem ipsum dolor sit amet lorem ipsum sed consequat magna tempus veroeros lorem sed tempus aliquam lorem ipsum veroeros consequat magna tempus lorem ipsum consequat Phasellus laoreet massa id justo mattis pharetra. Fusce suscipit ligula vel quam viverra sit amet mollis tortor congue. Sed quis mauris sit amet magna accumsan tristique. Curabitur leo nibh, rutrum eu malesuada in, tristique at erat.</p>
-        <h3>Accumsan lorem ipsum veroeros</h3>
-        <p>Consequat Phasellus laoreet massa id in, tristique at erat lorem ipsum dolor sit amet lorem ipsum sed consequat magna tempus veroeros consequat magna tempus lorem ipsum consequat Phasellus laoreet massa id justo mattis pharetra. Fusce suscipit ligula vel quam viverra sit amet mollis tortor congue. Sed quis mauris sit amet magna.</p>
-        <p>Phasellus laoreet massa id justo mattis pharetra. Fusce suscipit ligula vel quam viverra sit amet mollis tortor congue. Sed quis mauris sit amet magna accumsan tristique. Curabitur leo nibh, rutrum eu malesuada in, tristique at erat lorem ipsum dolor sit amet lorem ipsum sed consequat consequat magna tempus lorem ipsum consequat Phasellus laoreet massa id in, tristique at erat lorem ipsum dolor sit amet lorem ipsum sed consequat magna tempus veroeros lorem sed tempus aliquam lorem ipsum veroeros consequat magna tempus lorem ipsum consequat Phasellus laoreet massa id justo mattis pharetra. Fusce suscipit ligula vel quam viverra sit amet mollis tortor congue. Sed quis mauris sit amet magna accumsan tristique. Curabitur leo nibh, rutrum eu malesuada in, tristique at erat.</p>
-        <h3>Ligula suspcipit fusce veroeros</h3>
-        <p>Nullam dolore etiam sed massa id in, tristique at erat lorem ipsum dolor sit amet lorem ipsum sed consequat magna tempus veroeros consequat magna tempus lorem ipsum consequat Phasellus laoreet massa id justo mattis pharetra. Fusce suscipit ligula vel quam viverra sit amet mollis tortor congue. Sed quis mauris sit amet magna.</p>
-        <p>Sed massa id justo mattis pharetra. Fusce suscipit ligula vel quam viverra sit amet mollis tortor congue. Sed quis mauris sit amet magna accumsan tristique. Curabitur leo nibh, rutrum eu malesuada in, tristique at erat lorem ipsum dolor sit amet lorem ipsum sed consequat consequat magna tempus lorem ipsum consequat Phasellus laoreet massa id in, tristique at erat lorem ipsum dolor sit amet lorem ipsum sed consequat magna tempus veroeros lorem sed tempus aliquam lorem ipsum veroeros consequat magna tempus lorem ipsum consequat Phasellus laoreet massa id justo mattis pharetra. Fusce suscipit ligula vel quam viverra sit amet mollis tortor congue. Sed quis mauris sit amet magna accumsan.</p>
-    </article>
-</div>
-<!-- Sample Sidebar -->
-<div id="sidebar" class="4u 12u(mobile)" style="float:left; width:30%; ">
-    <!-- Highlights -->
-    <section>
-        <ul class="divided">
-            <li>
-                <!-- Highlight -->
-                <article class="box highlight">
-                    <header>
-                        <h2>Προσφατα Αρθρα</h2>
-                    </header>
-                </article>
-            </li>
-            {% for p in side_posts %}
-                <li>
-                <!-- Highlight -->
-                    <article class="box highlight">
-                        <header>
-                            <h3><a href="{% url 'main:articles' post_id=p.id %}">{{ p.title }}</a></h3>
-                        </header>
-                        <a href="{% url 'main:articles' post_id=p.id %}" class="image left"><img src="{{p.image.image.url }}" alt="" style="max-width:200px; height:auto; max-height:200px;" /></a>
-                        {{ p.text|trunc:28 }}
-                        <ul class="actions">
-                            <li><a href="{% url 'main:articles' post_id=p.id %}" class="c-btn c-btn--secondary">Συνεχιστε Εδω</a></li>
-                        </ul>
-                    </article>
-                </li>
-            {% endfor %}
-        </ul>
-    </section>
-</div>
 
+{% block content %}
+<div class="row">
+    <!-- Main Post -->
+    <div id="content" class="8u 12u(mobile)">
+        <article class="box post">
+            <header>
+                <h2 class="section-header--big section-header">{{ main_post.title }}</h2>
+            </header>
+            <p class="post__author"> Αρθρογράφος: {{ main_post.author.first_name }} {{ main_post.author.last_name }} </p> 
+            <p class="post__date"> {{ main_post.pub_date|date:"d/m/Y" }} </p>
+            <span class="image featured"><img src="{{ main_post.image.image.url }}" alt="" /></span> 
+            <div class="pic">{{ main_post.text|safe}}</div>
+        </article>
+    </div>
+    <!-- Sidebar -->
+    <div id="sidebar" class="4u 12u(mobile)">
+        <section>
+            <header>
+                <h2 class="section-header">Πρόσφατα Άρθρα</h2>
+            </header>
+            <ul class="divided">
+                {% for p in latest_posts %}
+                    <li class="sidebar__article">
+                        <article class="box highlight clearfix">
+                            <a href="{% url 'main:articles' post_id=p.id %}" class="image sidebar__img">
+                                <img src="{{p.image.image.url }}" alt=""/>
+                            </a>
+                            <div class="sidebar__text">
+                                <h3 class="sidebar__title">{{ p.title|trunc:TITLE_COUNT }}</h3>
+                                <div class="sidebar__desc">{{ p.text|trunc:DESC_COUNT }}</div>
+                                <p class="sidebar__author">έγραψε ο {{ p.author.first_name }} {{ p.author.last_name }} </p>
+                                <a href="{% url 'main:articles' post_id=p.id %}" class="c-btn">Συνεχίστε Εδώ</a>
+                            </div>  
+                        </article>
+                    </li>
+                {% endfor %}
+            </ul>
+        </section>
+    </div>
+</div>
 {% endblock %}

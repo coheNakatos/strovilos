@@ -2,8 +2,39 @@
 {% load custom_filters %}
 
 {% block content %}
-    <div id="content" class="12u(mobile)">
+<!-- Latest Posts / Slider -->
+<div class="row clearfix">
+    <div class="c-slider">
+        <h2 class="section-header">Τελευταία Άρθρα</h2>
+        <div class="my-slider">
+            <ul>
+                {% for p in latest_posts %}
+                    <li>
+                        <article class="box highlight">
+                            <a href="{% url 'main:articles' post_id=p.id %}" class="image left"><img src="{{p.image.image.url }}" alt="" /></a>
+                            <div class="c-slider__text">
+                                <h3><a href="{% url 'main:articles' post_id=p.id %}">{{ p.title|trunc:TITLE_COUNT }}</a></h3>
+                                <div class="c-slider__desc">{{ p.text|trunc:DESC_COUNT }}</div>
+                                <a href="{% url 'main:articles' post_id=p.id %}" class="c-slider__btn c-btn">Συνεχίστε Εδω</a>
+                            </div>
+                        </article>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
 
+    <!-- Quote -->
+    <div class="c-quote">
+        <h2 class="section-header">Είπαν κάποτε</h2>
+        <h3>{{ quote.text }}</h3>
+        <p class="c-quote__author"> <span class="c-quote__dash">&mdash;</span> {{ quote.author }}</p>
+    </div>
+</div>
+
+<!-- Category Posts -->
+<div class="row">
+    <div id="content" class="12u(mobile)">
         <article class="box post">
             <header>
                 <h2 class="section-header">{{ chosen_cat_name }}</h2>
@@ -16,28 +47,29 @@
                     <img src="{{ p.image.image.url }}" alt=""/>
                 </a>
                 <header class="c-post__head">
-                    <h2><a href="{% url 'main:articles' post_id=p.id %}">{{ p.title|trunc:8 }}</a></h2>
+                    <h2><a href="{% url 'main:articles' post_id=p.id %}">{{ p.title|trunc:TITLE_COUNT }}</a></h2>
                 </header>
-                <div class="c-post__desc">{{ p.text|trunc:45 }}</div>
+                <div class="c-post__desc">{{ p.text|trunc:DESC_COUNT }}</div>
                 <ul class="actions c-post__view">
-                    <li><a href="{% url 'main:articles' post_id=p.id %}" class="c-btn c-btn--secondary">Διαβαστε περισσοτερα</a></li>
+                    <li><a href="{% url 'main:articles' post_id=p.id %}" class="c-btn c-btn--secondary">Διαβάστε Περισσότερα</a></li>
                 </ul>
             </article>
         {% endfor %}
     </div>
+</div>
 {% endblock%}
 
 {% block pagination %}
     {% if not cat_posts_paginated.paginator.num_pages == 1 %}
         <section>
-            <!--TODO: add this to css file -->
-            <h2 style="text-transform:none;">Επόμενες Σελίδες</h2>
             <nav role="navigation">
                 <ul class="cd-pagination no-space custom-buttons">
                     {% if not cat_posts_paginated.has_previous %}
                         <li class="button"><a class="disabled" href="#">Prev</a></li>
                         <li><a class="current" href="#">1</a></li>
-                        <li><span>...</span></li>
+                        {% if cat_posts_paginated.paginator.num_pages > 2 %}
+                            <li><span>...</span></li>
+                        {% endif %}
                         <li><a href="?page={{ cat_posts_paginated.paginator.num_pages }}">{{ cat_posts_paginated.paginator.num_pages }}</a></li>
                         <li class="button"><a href="?page={{ cat_posts_paginated.next_page_number }}">Next</a></li>
                     {% else %}
@@ -54,7 +86,7 @@
                         {% endif %}
                     {% endif %}
                 </ul>
-            </nav> <!-- cd-pagination-wrapper -->
+            </nav> 
         </section>
     {% endif %}
 {% endblock %}
