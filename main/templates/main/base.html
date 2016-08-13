@@ -8,6 +8,7 @@
     <title>Στρόβιλος</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="- Περιστρέφεται, παλινδρομεί και επιστρέφει" />
     <!-- Compressing css and js files into one minified version -->
     {% compress css %}
     <!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
@@ -20,6 +21,8 @@
     <link href="https://fonts.googleapis.com/css?family=GFS+Didot|Noto+Sans&subset=greek" rel="stylesheet">
     <!--[if lte IE 8]><link rel="stylesheet" href="{% static "main/assets/css/ie8.css" %}"/><![endif]-->
     <link rel="shortcut icon" type="image/png" href="/favicon.png"/>
+    {% block extra_head %}
+    {% endblock %}
 </head>
 <body class="homepage">
     <div id="page-wrapper">
@@ -51,14 +54,18 @@
                         <p class="feedback_messages">{{message}}</p>
                     {% endfor %}
                 {% endif %}
-                
+               
                 {% block content %} 
                 {% endblock %}
+
+                <!-- Footer Anchor. Used When Errors Are Present -->
+		<a name="footer"> </a>
 
                 {% block pagination %}
                 {% endblock %}
             </div>
         </div>
+
 
         <!-- Footer -->
         <div id="footer-wrapper">            
@@ -161,8 +168,6 @@
                             </div>
                         </section>
                     </div>
-                    <!-- Footer Anchor. Used When Errors Are Present -->
-                    <a name="footer"/>
                 </div>
             </div>
             <div id="copyright" class="container">

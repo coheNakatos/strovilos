@@ -39,6 +39,7 @@ body {
 	color:#fff;
 	text-align: end;	
 }
+
 .quote__author::before {
 	content: "\2014";
 	color:#fff;	

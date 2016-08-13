@@ -1,7 +1,16 @@
 {% extends 'main/base.html' %}
 {% load custom_filters %}
 
-
+{% block extra_head %}
+    <meta property="og:url"		content="http://139.59.175.70{{ request.path }}" />
+    <meta property="og:type"		content="article" />
+    <meta property="og:title"		content="{{ main_post.title }}"/>
+    <meta property="og:description"	content="{{ main_post.text|safe|striptags|truncatewords:20 }}" />
+	<!-- TODO: Create Custom context processor to supply the domain when deployed -->
+    <meta property="og:image"		content="http://139.59.175.70{{ main_post.image.image.url }}" />
+    <meta property="article:author"	content="https://www.facebook.com/profile.php?id=100008762674761" />
+    <meta property="og:site_name"	content="Strovilos"/>
+{% endblock %}
 {% block content %}
 <div class="row">
     <!-- Main Post -->

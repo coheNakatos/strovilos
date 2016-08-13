@@ -22,7 +22,7 @@ input, textarea, select {
 }
 .scrollbtn {
     font-size: x-large !important;
-    vertical-align: text-top;
+    vertical-align: middle;
     color:#ffffff;
 
 }
@@ -30,6 +30,7 @@ input, textarea, select {
     content: "\2713";
     font-size: x-large;
     margin-right: 10px;
+    color: #25b125;
 }
 .feedback_messages{
     padding-top: 14px;
@@ -729,4 +730,12 @@ body .cd-pagination .button .disabled{
     }
 
 }
-
+@media (max-width:397px){
+    .post__date::before{
+        content: ""; 
+    }
+    .post__date{
+        float:none;
+        text-align: center;    
+    }
+}

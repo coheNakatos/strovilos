@@ -73,6 +73,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.template.context_processors.static',
                 'main.context_processors.global_settings',
+		'django.core.context_processors.request',
             ],
         },
     },
@@ -201,8 +202,8 @@ COMPRESS_CSS_FILTERS = [
 
 # Email Agent Setup
 # Uncomment this for testing
-#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-EMAIL_BACKEND = "sgbackend.SendGridBackend"
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+#EMAIL_BACKEND = "sgbackend.SendGridBackend"
 EMAIL_HOST = 'smtp.sendgrid.net'
 SENDGRID_USER = 'linosgian'
 SENDGRID_PASSWORD = '558FFXQ%P^Fm&4%b0%0bk78RY'
