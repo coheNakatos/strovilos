@@ -26,9 +26,9 @@
 
     <!-- Quote -->
     <div class="c-quote">
-        <h2 class="section-header">Είπαν κάποτε</h2>
-        <h3>{{ quote.text }}</h3>
-        <p class="c-quote__author"> <span class="c-quote__dash">&mdash;</span> {{ quote.author }}</p>
+        <h2 class="section-header">Παραφορές</h2>
+        <h3>{% if quote %} {{quote.text }} {% endif %}</h3>
+        <p class="c-quote__author"> <span class="c-quote__dash">&mdash;</span> {% if quote %} {{quote.author }} {% endif %}</p>
     </div>
 </div>
 
@@ -37,11 +37,11 @@
     <div id="content" class="12u(mobile)">
         <article class="box post">
             <header>
-                <h2 class="section-header">{{ chosen_cat_name }}</h2>
+                <h2 class="section-header">{{ main_title }}</h2>
             </header>
         </article>
         <!-- Post -->
-        {% for p in cat_posts_paginated %}
+        {% for p in posts_paginated %}
             <article class="box post c-post">
                 <a href="{% url 'main:articles' post_id=p.id %}" class="image featured c-post__img">
                     <img src="{{ p.image.image.url }}" alt=""/>
@@ -60,27 +60,27 @@
 {% endblock%}
 
 {% block pagination %}
-    {% if not cat_posts_paginated.paginator.num_pages == 1 %}
+    {% if not posts_paginated.paginator.num_pages == 1 %}
         <section>
             <nav role="navigation">
                 <ul class="cd-pagination no-space custom-buttons">
-                    {% if not cat_posts_paginated.has_previous %}
+                    {% if not posts_paginated.has_previous %}
                         <li class="button"><a class="disabled" href="#">Prev</a></li>
                         <li><a class="current" href="#">1</a></li>
-                        {% if cat_posts_paginated.paginator.num_pages > 2 %}
+                        {% if posts_paginated.paginator.num_pages > 2 %}
                             <li><span>...</span></li>
                         {% endif %}
-                        <li><a href="?page={{ cat_posts_paginated.paginator.num_pages }}">{{ cat_posts_paginated.paginator.num_pages }}</a></li>
-                        <li class="button"><a href="?page={{ cat_posts_paginated.next_page_number }}">Next</a></li>
+                        <li><a href="?page={{ posts_paginated.paginator.num_pages }}">{{ posts_paginated.paginator.num_pages }}</a></li>
+                        <li class="button"><a href="?page={{ posts_paginated.next_page_number }}">Next</a></li>
                     {% else %}
-                        <li class="button"><a href="?page={{ cat_posts_paginated.previous_page_number }}">Prev</a></li>
+                        <li class="button"><a href="?page={{ posts_paginated.previous_page_number }}">Prev</a></li>
                         <li><a href="?page=1">1</a></li>
-                        {% if not cat_posts_paginated.number == 2 %}<li><span>...</span></li> {% endif %}        
-                        <li><a class="current" href="?page={{ cat_posts_paginated.number }}">{{ cat_posts_paginated.number }}</a></li>
-                        {% if cat_posts_paginated.has_next %}
-                            {% if not cat_posts_paginated.next_page_number == cat_posts_paginated.paginator.num_pages %}<li><span>...</span></li> {% endif %}
-                            <li><a href="?page={{ cat_posts_paginated.paginator.num_pages }}">{{ cat_posts_paginated.paginator.num_pages }}</a></li>
-                            <li class="button"><a href="?page={{ cat_posts_paginated.next_page_number }}">Next</a></li>    
+                        {% if not posts_paginated.number == 2 %}<li><span>...</span></li> {% endif %}        
+                        <li><a class="current" href="?page={{ posts_paginated.number }}">{{ posts_paginated.number }}</a></li>
+                        {% if posts_paginated.has_next %}
+                            {% if not posts_paginated.next_page_number == posts_paginated.paginator.num_pages %}<li><span>...</span></li> {% endif %}
+                            <li><a href="?page={{ posts_paginated.paginator.num_pages }}">{{ posts_paginated.paginator.num_pages }}</a></li>
+                            <li class="button"><a href="?page={{ posts_paginated.next_page_number }}">Next</a></li>    
                         {% else %}
                             <li class="button"><a class="disabled" href="#">Next</a></li>
                         {% endif %}

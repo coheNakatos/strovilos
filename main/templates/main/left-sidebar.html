@@ -1,6 +1,5 @@
 {% extends 'main/base.html' %}
 {% load custom_filters %}
-
 {% block extra_head %}
     <meta property="og:url"		content="http://139.59.175.70{{ request.path }}" />
     <meta property="og:type"		content="article" />
@@ -11,6 +10,13 @@
     <meta property="article:author"	content="https://www.facebook.com/profile.php?id=100008762674761" />
     <meta property="og:site_name"	content="Strovilos"/>
 {% endblock %}
+
+{% block extra_admin_nav %}
+    <li>
+        <a href="{% url 'admin:main_posts_change' main_post.id %}"><span>Επεξεργασία Άρθρου</span></a>
+    </li>
+{% endblock %}
+
 {% block content %}
 <div class="row">
     <!-- Main Post -->
@@ -19,11 +25,19 @@
             <header>
                 <h2 class="section-header--big section-header">{{ main_post.title }}</h2>
             </header>
-            <p class="post__author"> Αρθρογράφος: {{ main_post.author.first_name }} {{ main_post.author.last_name }} </p> 
+            <p class="post__author"> <a href="{% url 'main:authors' author_id=main_post.author.id %}"> Αρθρογράφος: {{ main_post.author.first_name }} {{ main_post.author.last_name }} </a> </p> 
             <p class="post__date"> {{ main_post.pub_date|date:"d/m/Y" }} </p>
             <span class="image featured"><img src="{{ main_post.image.image.url }}" alt="" /></span> 
             <div class="pic">{{ main_post.text|safe}}</div>
         </article>
+         <div class="other_posts__container">
+            {% if previous_post %}
+                <div class="other_posts__previous_post"><a class="c-btn" href="{% url 'main:articles' post_id=previous_post.id %}">Προηγούμενο Άρθρο</a></div>
+            {% endif %}
+            {% if next_post %}
+                <div class="other_posts__next_post"><a class="c-btn" href="{% url 'main:articles' post_id=next_post.id %}">Επόμενο Άρθρο</a></div>
+            {% endif %}
+        </div>
     </div>
     <!-- Sidebar -->
     <div id="sidebar" class="4u 12u(mobile)">
@@ -41,7 +55,7 @@
                             <div class="sidebar__text">
                                 <h3 class="sidebar__title">{{ p.title|trunc:TITLE_COUNT }}</h3>
                                 <div class="sidebar__desc">{{ p.text|trunc:DESC_COUNT }}</div>
-                                <p class="sidebar__author">έγραψε ο {{ p.author.first_name }} {{ p.author.last_name }} </p>
+                                <p class="sidebar__author">έγραψε ο <a href="{% url 'main:authors' author_id=p.author.id %}">{{ p.author.first_name }} {{ p.author.last_name }} </a> </p>
                                 <a href="{% url 'main:articles' post_id=p.id %}" class="c-btn">Συνεχίστε Εδώ</a>
                             </div>  
                         </article>

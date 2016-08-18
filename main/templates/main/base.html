@@ -25,8 +25,18 @@
     {% endblock %}
 </head>
 <body class="homepage">
+    {% if user.is_staff %}
+        <nav id="extra_nav">
+            <ul>
+                <li>
+                    <a href="/admin"><span>Διαχείριση Σελίδας</span></a>
+                </li>
+                {% block extra_admin_nav %}
+                {% endblock %}
+            </ul>
+        </nav>
+    {% endif %}
     <div id="page-wrapper">
-        
         <!-- Header -->
         <div id="header-wrapper">
             <div id="header" class="clearfix container">
@@ -59,8 +69,7 @@
                 {% endblock %}
 
                 <!-- Footer Anchor. Used When Errors Are Present -->
-		<a name="footer"> </a>
-
+                <a name="footer"> </a>
                 {% block pagination %}
                 {% endblock %}
             </div>
@@ -71,7 +80,7 @@
         <div id="footer-wrapper">            
             <div id="footer" class="container">
                 <header>
-                    <h2>Έχετε ερωτήσεις ή σχόλια; <strong>Επικοινωνήστε:</strong></h2>
+                    <h2>Έχετε Ερωτήσεις ή Σχόλια; <strong>Επικοινωνήστε:</strong></h2>
                 </header>
                 <!-- Go To Top Button -->
                 <a href="#" class="scrollToTop">
@@ -135,30 +144,20 @@
                     <!-- Other Means of Contact -->
                     <div class="6u 12u(mobile)">
                         <section>
-                            <p>Erat lorem ipsum veroeros consequat magna tempus lorem ipsum consequat Phaselamet mollis tortor congue. Sed quis mauris sit amet magna accumsan tristique. Curabitur leo nibh, rutrum eu malesuada.</p>
-                            <div class="row">
-                                <div class="6u 12u(mobile)">
+                            <h3 id="about_us" class="section-header">Ποιοί Είμαστε</h3>
+                            <p class="site_desc">Αν και είναι, μάλλον, πρόδηλο, ο Στρόβιλος είναι ένα ηλεκτρονικό περιοδικό ποικίλης ύλης. Τα τρία ρήματα που βρίσκονται κάτω από το λογότυπο εκφράζουν τους πόθους, τις ανησυχίες, τις ευαισθησίες, τους φόβους και τις προσδοκίες μας. Περιστρέφεται, παλινδρομεί και επιστρέφει. Στροβιλιζόμαστε στον ωκεανό του διαδικτύου. Περίτεχνοι, επικεντρωμένοι στην ιστορία, την πολιτική, την κοινωνία,το μαύρο χιούμορ. Γράφουμε ιστορίες. Με μια φιλοδοξία: να διαβαστούν και αν έχουν ενδιαφέρον να προκαλέσουν αντιδράσεις.</p>
+                            <div class="row about_us_container">
+                                <!-- <div class="6u 12u(mobile)">
                                     <ul class="icons">
-                                        <li class="icon fa-home">
-                                            Αρυββου 16
-                                            <br /> Βύρωνας, ΤΚ 16232
-                                            <br /> GR
-                                        </li>
                                         <li class="icon fa-envelope">
-                                            <a href="#">info@untitled.tld</a>
+                                            <a href="mailto:kgstrovilos@gmail.com?Subject=Στρόβιλος">kgstrovilos@gmail.com</a>
                                         </li>
                                     </ul>
-                                </div>
-                                <div class="6u 12u(mobile)">
+                                </div> -->
+                                <div class="6u 12u(mobile) about_us_container">
                                     <ul class="icons">
                                         <li class="icon fa-pencil">
                                             <a href="/about">Συντακτική Ομάδα</a>
-                                        </li>
-                                        <li class="icon fa-twitter">
-                                            <a href="#">@untitled-tld</a>
-                                        </li>
-                                        <li class="icon fa-instagram">
-                                            <a href="#">instagram.com/untitled-tld</a>
                                         </li>
                                         <li class="icon fa-facebook">
                                             <a href="https://www.facebook.com/strovilos">facebook.com/strovilos</a>

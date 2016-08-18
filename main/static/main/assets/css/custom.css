@@ -9,7 +9,7 @@ body{
 ul.links li:first-child{
     border-left: none;
 }
-h1, h2, h3, h4, h5, h6{
+ h1, h2, h3, h4, h5, h6{
     text-transform: none;
     text-align: left;
 }
@@ -17,6 +17,31 @@ input, textarea, select {
     font-family: 'Noto Sans';
     color: #777;
 }
+.site_desc {
+    font-size: 16px;
+}
+.about_us {
+    width: 50%;
+    margin: 0px auto;
+    padding-top: 0px;
+}
+
+
+.other_posts__next_post{
+    float:right;
+}
+
+.other_posts__previous_post{
+    float:left;
+}
+.about_us_container {
+    width: 100%;
+    display: -webkit-box;
+    -webkit-box-pack: center;
+    -webkit-box-align: center;
+    padding-top: 0px
+}
+
 #pot {
     display: none;
 }
@@ -71,7 +96,38 @@ input, textarea, select {
     content: '\2717';
     font-size: 25px;
 }
+#about_us{
+    text-align:center; 
+    padding-bottom: 6px;
+}
+#extra_nav{
+    background-color: #333;
+    width: 100%;
+    overflow: hidden;
+    text-align: center;
+}
+#extra_nav ul {
+    margin-bottom: 0px;
+    list-style: none;
+}
 
+#extra_nav > ul > li{
+    display: inline-block;
+}
+
+#extra_nav > ul > li::after{
+    content: '|';
+}
+#extra_nav > ul > li:last-of-type::after {
+    display: none;
+}
+
+#extra_nav > ul > li > a{
+    color: papayawhip;
+}
+#footer {
+    font-family: 'GFS Didot', serif;
+}
 #footer-wrapper {
     padding-bottom: 0px;
 }
@@ -143,6 +199,15 @@ p.about__author::after {
     max-width:100%;
     display:block;
 }
+.pic h1,.pic h2,.pic h3,.pic h4,.pic h5,.pic h6{
+	font-size: x-large !important;
+	font-family: 'GFS Didot', serif;
+	letter-spacing: normal;
+}
+.pic h1 {
+	font-size: xx-large !important;
+}
+
 /* Auto douleuei alla paizei na einai kai mlkia */
 #logo-image,
 img{
@@ -375,6 +440,8 @@ h3.sidebar__title {
 .c-slider .image.left {
     width: 25%;
     max-width: 200px;
+    max-height: 181px;
+    overflow: hidden;
 }
 
 .c-slider__text {
@@ -492,13 +559,14 @@ p.c-quote__author {
 
 .c-quote h3::before {
     content: '\201C';
-    left: 0px;
+    left: -34px;
 }
 
 .c-quote h3::after {
     right: 0;
     content: '\201D';
-    bottom: -24px;
+    bottom: -40px;
+	right: -20px;
     top: initial;
 }
 

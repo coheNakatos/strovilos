@@ -8,7 +8,7 @@ register = template.Library()
 # TODO: ADD remove tags!
 @register.filter
 def trunc(value, arg):
-	return truncatewords(removetags(mark_safe(value), 'img h3 h1 h2 h4 h5 h6 strong'), arg) 
+	return truncatewords(removetags(mark_safe(value), 'img h3 h1 h2 h4 h5 h6 strong em b'), arg) 
 
 @register.filter
 @stringfilter
