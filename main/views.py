@@ -4,6 +4,7 @@ from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.models import User
 
 from django_batch_uploader.views import AdminBatchUploadView
 from .forms import ContactForm
@@ -31,22 +32,27 @@ def index(request, category_id=None):
 			return HttpResponseRedirect('/')
 		else:
 			form_errors = form.errors
-	latest_posts = list(Posts.objects.exclude(status='d')[:3])
+	latest_posts = list(Posts.objects.exclude(status='d')[:5])
+	try:
+		quote = BodyText.objects.get(active=True)
+	except ObjectDoesNotExist:
+		quote = None
+	
 	if category_id is not None:
-		category_posts = Posts.objects.filter(category=category_id).exclude(status='d').order_by('-viewcount')
+		posts = Posts.objects.filter(category=category_id).exclude(status='d').order_by('-viewcount')
 		try:
-			chosen_cat_name = Category.objects.get(pk=category_id)
+			main_title = Category.objects.get(pk=category_id)
 		except ObjectDoesNotExist:
 			raise Http404('Δεν υπάρχει αυτή η κατηγορία.')			
-		if not category_posts:
+		if not posts:
 			raise Http404('Δεν υπάρχουν δημοσιεύσεις σε αυτή την κατηγορία.')
 	else:
-		chosen_cat_name = "Στρόβιλος"
-		category_posts = Posts.objects.exclude(Q(status='d')).order_by('-viewcount')
+		main_title = "Στρόβιλος"
+		posts = Posts.objects.exclude(Q(status='d')).order_by('-viewcount')
 	
 	# TODO: Uncomment this when we are ready to deploy
 	# Check if the main posts are also recent posts so we don't show them twice
-	# for post in category_posts:
+	# for post in posts:
 	# 	if post in latest_posts:
 	# 		try:
 	# 			index = latest_posts.index(post)
@@ -54,19 +60,20 @@ def index(request, category_id=None):
 	# 		except Exception as e:
 	# 			print (e)
 
-	paginator = Paginator(category_posts,settings.POSTS_PER_PAGE)
+	paginator = Paginator(posts,settings.POSTS_PER_PAGE)
 	page = request.GET.get('page')
 	try:
-		cat_post_paginated = paginator.page(page)
+		posts_paginated = paginator.page(page)
 	except PageNotAnInteger:
-		cat_post_paginated = paginator.page(1)
+		posts_paginated = paginator.page(1)
 	except EmptyPage:
-		cat_post_paginated = paginator.page(paginator.num_pages)
+		posts_paginated = paginator.page(paginator.num_pages)
 	
 	view_context = {
-		'chosen_cat_name'		: chosen_cat_name,
+		'main_title'			: main_title,
 		'latest_posts'			: latest_posts,
-		'cat_posts_paginated'	: cat_post_paginated,
+		'posts_paginated'		: posts_paginated,
+		'quote'					: quote,
 	}
 	base_cntx = get_base_context(form_errors)
 	final_context = {**view_context, **base_cntx}
@@ -74,10 +81,20 @@ def index(request, category_id=None):
 
 def articles(request, post_id):
 	main_post = get_object_or_404(Posts ,pk=post_id)
-	latest_posts = Posts.objects.exclude(Q(pk=main_post.id) | Q(status='d'))[:3]
+	latest_posts = Posts.objects.exclude(Q(pk=main_post.id) | Q(status='d'))[:4]
+	try:
+		next_post = main_post.get_next_by_pub_date(category=main_post.category)
+	except:
+		next_post = None
+	try:
+		previous_post = main_post.get_previous_by_pub_date(category=main_post.category)
+	except:
+		previous_post = None
 	view_context = {
-		'main_post'  : main_post,
-		'latest_posts' : latest_posts,
+		'main_post'  	: main_post,
+		'latest_posts' 	: latest_posts,
+		'next_post'		: next_post,
+		'previous_post'	: previous_post,
 	}
 	base_cntx = get_base_context()
 	final_context = {**view_context, **base_cntx}
@@ -85,6 +102,36 @@ def articles(request, post_id):
 	increasecnt(post_id)
 	return render(request, 'main/left-sidebar.html', final_context)
 
+def authors(request, author_id):
+	author = User.objects.get(pk=author_id)
+	posts = Posts.objects.filter(author__id=author_id).exclude(status='d').order_by('-viewcount')
+	latest_posts = list(Posts.objects.filter(author__id=author_id).exclude(status='d')[:5])
+	
+	paginator = Paginator(posts,settings.POSTS_PER_PAGE)
+	page = request.GET.get('page')
+	try:
+		posts_paginated = paginator.page(page)
+	except PageNotAnInteger:
+		posts_paginated = paginator.page(1)
+	except EmptyPage:
+		posts_paginated = paginator.page(paginator.num_pages)
+	main_title = author.first_name + " " + author.last_name
+
+	try:
+		quote = BodyText.objects.get(active=True)
+	except ObjectDoesNotExist:
+		quote = None
+
+	view_context = {
+		'posts_paginated'	: posts_paginated,
+		'latest_posts' 		: latest_posts,
+		'main_title'		: main_title,
+		'quote'				: quote,
+	}
+
+	base_cntx = get_base_context()
+	final_context = {**view_context, **base_cntx}
+	return render(request, 'main/index.html', final_context)	
 def about(request):
 	latest_posts = Posts.objects.exclude(status='d')[:3]
 	view_context = {
@@ -113,7 +160,7 @@ class ImageBatchView(AdminBatchUploadView):
     default_fields = []
 
     #Which fields can be applied individually?
-    detail_fields = ['image_title']
+    detail_fields = []
 
     default_values = {}	
 
