@@ -1,18 +1,22 @@
 from django import forms
-from .models import Posts
+from .models import Posts, UpImages
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
-
-
+from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
+from django.db.models.fields.related import ManyToOneRel
 class PostsForm(forms.ModelForm):
 	text = forms.CharField(widget=CKEditorUploadingWidget(), label='Κείμενο')
 	# The id change on this form field is used to assist the "thumbnails.js" script
 	class Meta:
 		model = Posts
-		exclude = ['pub_date', 'description', 'viewcount']
+		exclude = ['viewcount']
 	# A script to dynamically change the thumbnails in Posts' change form using Ajax and JQuery
 	class Media:
 		js=('main/assets/js/thumbnails.js',)
 
+	# This is overriding the queryset during adding/changing a post
+	def __init__(self, *args, **kwargs):
+		super(PostsForm, self).__init__(*args, **kwargs)
+		self.fields['image'].queryset = UpImages.objects.order_by('image_title')
 class ContactForm(forms.Form):
 	
 	# Overriding the error_messages
