@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
-
+from django import forms
 from django_batch_uploader.admin import BaseBatchUploadAdmin
 from .models import Posts, UpImages, Category, BodyText
 from .forms import PostsForm
@@ -19,40 +19,23 @@ class UpImagesModelAdmin(BaseBatchUploadAdmin):
     batch_url_name = "admin_image_batch_view"
     
     # This removes the following fields from both add and change forms
-    exclude = ['uploaded_by',]
+    exclude = ['uploaded_by','image_title', 'upload_date']
     
-    # list_per_page = 10
-    list_display = ('image_title', 'thumbnail')
+    list_display = ('upload_date', 'image_title', 'thumbnail')
     search_fields = ['image_title']
-    
-    actions = ['delete_selected_pics'] 
-    def get_actions(self, request):
-        actions = super(UpImagesModelAdmin, self).get_actions(request)
-        del actions['delete_selected']
-        return actions
 
-    # Custom Bulk Delete. Also deletes the actual image files
-    def delete_selected_pics(self, request, queryset): 
-        for obj in queryset: obj.delete()
-        if queryset.count() == 1:
-                message_bit = "1 Εικόνα Διαγράφηκε"
-        else:
-                message_bit = "%s Εικόνες Διαγράφηκαν" % queryset.count()
-        self.message_user(request, "%s Επιτυχώς." % message_bit)
-    delete_selected_pics.short_description = "Διαγραφή Επιλεγμένων Εικόνων"
-    
-    # Fill in the "uploaded_by" field
     def save_model(self, request, obj, form, change):
         obj.uploaded_by = request.user
         obj.save()
 admin.site.register(UpImages, UpImagesModelAdmin)
-
+class UserChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+        return obj.first_name
 class PostsModelAdmin(admin.ModelAdmin):
 	actions = ['publish']
 	form = PostsForm
 	# Which fields to display ( that's only for listview )
-	list_display = ('title', 'pub_date','thumbnail', 'author', 'status', 'viewcount', 'category')
-	#list_per_page = 10
+	list_display = ('title', 'thumbnail', 'category', 'author_name', 'status', 'viewcount', 'pub_date')
 	
 	# That also appears when changing the object
 	readonly_fields = ('thumbnail',)
@@ -66,8 +49,14 @@ class PostsModelAdmin(admin.ModelAdmin):
 		else:
 			message_bit = "%s Άρθρα Δημοσιεύτηκαν" % rows_updated
 		self.message_user(request, "%s Επιτυχώς" % message_bit)
-	
 	publish.short_description = 'Δημοσίευση επιλεγμένων άρθρων'
+	def formfield_for_foreignkey(self, db_field, request=None, **kwargs):
+		if db_field.name == 'author':
+			kwargs['form_class'] = UserChoiceField
+		return super(PostsModelAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+	def author_name(self, instance):
+		return instance.author.first_name
+	author_name.short_description = 'Αρθρογράφος'
 admin.site.register(Posts, PostsModelAdmin)
 
 # This is used to make some fields available in User Admin Forms
@@ -112,11 +101,6 @@ class UserModelAdmin(UserAdmin):
 admin.site.register(User,UserModelAdmin)
 
 class BodyTextAdmin(admin.ModelAdmin):
-	def get_form(self, request, obj=None, **kwargs):
-		# If obj is not None it means we are in the change form
-		# In that case hide "description"
-		if obj:
-			kwargs['exclude'] = ['description',]
-		return super(BodyTextAdmin, self).get_form(request, obj, **kwargs)
-
+	list_display = ('text', 'author', 'pub_date')
+	exclude = ['pub_date',]
 admin.site.register(BodyText, BodyTextAdmin)
