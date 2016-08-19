@@ -5,12 +5,14 @@ Django settings for strovilos project.
 """
 import os
 from .secret_settings import *
+from django.utils.translation import ugettext_lazy as _
 
 ########################################################################################################
 ######################################## Basic/Custom Settings #########################################
 ########################################################################################################
+#TODO: DEBUG / EMAIL BACKEND / COMPRESS
 # Custom Variables 
-POSTS_PER_PAGE = 4
+POSTS_PER_PAGE = 10
 TITLE_COUNT = 10
 DESC_COUNT = 28
 
@@ -51,12 +53,14 @@ INSTALLED_APPS = [
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'main.middleware.AdminLocaleURLMiddleware'
 ]
 
 
@@ -186,15 +190,18 @@ USE_L10N = True
 
 USE_TZ = False
 
-
-
+LANGUAGES = (
+    ('el', _('Greek')),
+    ('en', _('English')),
+)
+ADMIN_LANGUAGE_CODE = 'el'
 
 ########################################################################################################
 ######################################## Installed Apps Settings #######################################
 ########################################################################################################
 
 # Compress 
-COMPRESS_ENABLED = True
+COMPRESS_ENABLED = False
 COMPRESS_CSS_FILTERS = [
 	'compressor.filters.css_default.CssAbsoluteFilter',
 	'compressor.filters.cssmin.rCSSMinFilter',
@@ -206,7 +213,6 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 #EMAIL_BACKEND = "sgbackend.SendGridBackend"
 EMAIL_HOST = 'smtp.sendgrid.net'
 SENDGRID_USER = 'linosgian'
-SENDGRID_PASSWORD = '558FFXQ%P^Fm&4%b0%0bk78RY'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = SENDGRID_USER + '@sendgrip.com'
@@ -229,37 +235,28 @@ GRAPPELLI_ADMIN_TITLE = 'Επεξεργασία Ιστοσελίδας'
 
 CKEDITOR_JQUERY_URL = '//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js'
 CKEDITOR_UPLOAD_PATH = "images/"
-
 CKEDITOR_CONFIGS = {
+    
     'default': {
-        #'skin': 'moono',
         'skin': 'office2013',
         'toolbar_Basic': [
             ['Source', '-', 'Bold', 'Italic']
         ],
         'toolbar_YourCustomToolbarConfig': [
-            {'name': 'document', 'items': ['Source', '-', 'NewPage', 'Preview', 'Print', '-', 'Templates']},
-            {'name': 'clipboard', 'items': ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo']},
+            {'name': 'tools', 'items': ['Maximize']}, 
+            {'name': 'clipboard', 'items': ['PasteText', 'PasteFromWord', '-', 'Undo', 'Redo']},
             {'name': 'editing', 'items': ['Find', 'Replace' ]},
             '/',
-            {'name': 'basicstyles',
-             'items': ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat']},
             {'name': 'paragraph',
              'items': ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote',  '-',
-                       'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl',
-                       'Language']},
-            {'name': 'links', 'items': ['Link', 'Unlink', 'Anchor']},
-            {'name': 'insert',
-             'items': ['Image', 'Table', 'HorizontalRule', 'SpecialChar', 'PageBreak']},
+                       'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'Image', 'Link', 'Unlink', 'Anchor', 'HorizontalRule' ]},
             '/',
-            {'name': 'styles', 'items': ['Styles', 'Format', 'Font', 'FontSize']},
-            {'name': 'colors', 'items': ['TextColor', 'BGColor']},
-            {'name': 'tools', 'items': ['Maximize']}, 
+            {'name': 'styles', 'items': ['Bold', 'Italic', 'Underline', 'RemoveFormat', 'Styles', 'Format', 'Font', 'FontSize']},
         ],
         'toolbar': 'YourCustomToolbarConfig',
          'toolbarGroups': [{ 'name': 'document', 'groups': [ 'mode', 'document', 'doctools' ] }],
          'height': 291,
-         'width': '100%',
+         'width': 800,
          'filebrowserWindowHeight': 725,
          'filebrowserWindowWidth': 940,
          'toolbarCanCollapse': True,
@@ -278,8 +275,10 @@ CKEDITOR_CONFIGS = {
                 'clipboard',
                 'dialog',
                 'dialogui',
-                'elementspath'
+                'elementspath',
+                'wordcount',
             ]),
         'removePlugins': 'smiley',
+        'disableNativeSpellChecker' : False,
     }
 }
