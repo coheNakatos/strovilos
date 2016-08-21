@@ -7,4 +7,5 @@ db.sqlite3
 strovilos/secret_settings.py
 *.pyc
 *.swp
+.Trash-1000/
 images/*
