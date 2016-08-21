@@ -19,14 +19,17 @@ input, textarea, select {
 }
 .site_desc {
     font-size: 16px;
+    text-align: left;
 }
 .about_us {
     width: 50%;
     margin: 0px auto;
     padding-top: 0px;
 }
-
-
+#facebook_container{
+    padding-left: 0px;
+    margin-left: -51px;
+}
 .other_posts__next_post{
     float:right;
 }
@@ -307,9 +310,7 @@ div#main-wrapper {
 
 #logo {
     max-width: 28%;
-    margin: 0 auto;
     padding: 0;
-    float: none;
 }
 
 #nav {
@@ -344,7 +345,51 @@ div#header {
     box-sizing: border-box;
 }
 
+/* the hamburger button shouldn't overlap actions for admins */
+#titleBar{
+    max-width: 80px;
+}
 
+/* stuff for search bar */
+.c-search {
+    float: right;
+    padding-top: 21px;
+    padding-bottom: 0;
+    margin-bottom: 25px;
+    width: 35%;
+}
+
+.c-search__input{
+    width: 85%!important;
+    float: left;
+}
+
+#submit__btn.c-search__btn {
+    margin-left: 1%;
+    margin-top: 0;
+    width: 14%!important;
+    padding: 1.05em 0 1.05em 0!important;
+    font-size: 14.8px!important;
+}
+
+@media (max-width: 736px){
+    #submit__btn.c-search__btn{
+        font-size: 13px!important;
+    }
+
+    .c-search{
+        margin-bottom: 0;
+    }
+}
+
+@media (max-width: 580px){
+    .c-search, #logo{
+        width: 100%!important;
+        margin: 0 auto;
+        float: none;
+        padding-left: 0!important;
+    }
+}
 
 
 
@@ -456,7 +501,7 @@ h3.sidebar__title {
     color: inherit;
     letter-spacing: 1px;
     color: #333;
-    font-size: 16px;
+    font-size: 20px;
     line-height: 0;
     letter-spacing: 0.5px;
     font-weight: bold;
@@ -580,6 +625,9 @@ p.c-quote__author {
         width: 100%;
         padding: 20px 0;
     }
+    .c-quote h3::before {
+        left:-21px ;
+    } 
 }
 
 
@@ -684,6 +732,18 @@ body #content .post.c-post {
     width: 100%;
     left: 0;
     right: 0;
+}
+
+
+.c-share--fb {
+    margin-top: -5px;
+    width: auto;
+}
+
+@media (min-width: 560px){
+    .c-share--fb{
+        float: right
+    }
 }
 
 
@@ -797,7 +857,26 @@ body .cd-pagination .button .disabled{
         padding-left: 30px;
     }
 
+    #about_us {
+        margin-top: 40px!important;
+    }
 }
+
+/* image and text of sidebar will fill one row each */
+@media (max-width: 540px){
+    .sidebar__img,
+    .image.left {
+        width: 100%!important;
+        float: none;
+    }  
+    .sidebar__text,
+    .c-slider__text{
+        width: 100%;
+        float: none;
+        padding-left: 0; 
+    }
+}
+
 @media (max-width:397px){
     .post__date::before{
         content: ""; 

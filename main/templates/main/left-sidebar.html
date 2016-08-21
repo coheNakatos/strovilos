@@ -1,12 +1,13 @@
 {% extends 'main/base.html' %}
 {% load custom_filters %}
+
 {% block extra_head %}
-    <meta property="og:url"		content="http://139.59.175.70{{ request.path }}" />
+    <meta property="og:url"		content="https://strovilos{{ request.path }}" />
     <meta property="og:type"		content="article" />
     <meta property="og:title"		content="{{ main_post.title }}"/>
     <meta property="og:description"	content="{{ main_post.text|safe|striptags|truncatewords:20 }}" />
 	<!-- TODO: Create Custom context processor to supply the domain when deployed -->
-    <meta property="og:image"		content="http://139.59.175.70{{ main_post.image.image.url }}" />
+    <meta property="og:image"		content="https://strovilos.gr{{ main_post.image.image.url }}" />
     <meta property="article:author"	content="https://www.facebook.com/profile.php?id=100008762674761" />
     <meta property="og:site_name"	content="Strovilos"/>
 {% endblock %}
@@ -27,6 +28,8 @@
             </header>
             <p class="post__author"> <a href="{% url 'main:authors' author_id=main_post.author.id %}"> Αρθρογράφος: {{ main_post.author.first_name }} {{ main_post.author.last_name }} </a> </p> 
             <p class="post__date"> {{ main_post.pub_date|date:"d/m/Y" }} </p>
+            <div id=share-fb class="c-share--fb">
+            </div>
             <span class="image featured"><img src="{{ main_post.image.image.url }}" alt="" /></span> 
             <div class="pic">{{ main_post.text|safe}}</div>
         </article>

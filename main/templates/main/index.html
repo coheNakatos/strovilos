@@ -32,7 +32,7 @@
     </div>
 </div>
 
-<!-- Category Posts -->
+<!-- Main Posts -->
 <div class="row">
     <div id="content" class="12u(mobile)">
         <article class="box post">
@@ -60,6 +60,7 @@
 {% endblock%}
 
 {% block pagination %}
+    <!-- Pagination -->
     {% if not posts_paginated.paginator.num_pages == 1 %}
         <section>
             <nav role="navigation">
@@ -75,7 +76,9 @@
                     {% else %}
                         <li class="button"><a href="?page={{ posts_paginated.previous_page_number }}">Prev</a></li>
                         <li><a href="?page=1">1</a></li>
-                        {% if not posts_paginated.number == 2 %}<li><span>...</span></li> {% endif %}        
+                        {% if not posts_paginated.number == 2 %}
+                            <li><span>...</span></li>
+                        {% endif %}        
                         <li><a class="current" href="?page={{ posts_paginated.number }}">{{ posts_paginated.number }}</a></li>
                         {% if posts_paginated.has_next %}
                             {% if not posts_paginated.next_page_number == posts_paginated.paginator.num_pages %}<li><span>...</span></li> {% endif %}

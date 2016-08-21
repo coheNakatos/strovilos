@@ -1,6 +1,4 @@
-{% load static %}
-{% load custom_filters %}
-{% load compress %}
+{% load static custom_filters compress %}
 <!DOCTYPE HTML>
 <html>
 
@@ -31,6 +29,9 @@
                 <li>
                     <a href="/admin"><span>Διαχείριση Σελίδας</span></a>
                 </li>
+                 <li>
+                    <a href="/secret"><span>Αδημοσίευτα Άρθρα</span></a>
+                </li>
                 {% block extra_admin_nav %}
                 {% endblock %}
             </ul>
@@ -43,6 +44,12 @@
                 <div class="row">
                     <!-- Logo -->
                     <h1 id="logo"> <a href="/"><img id="logo-image" src="{{ logo.image.url }}"></a> </h1>
+                     <!-- Temporary search-form -->
+                    <form class="c-search" action="/search" method="get">
+                        {% csrf_token %}
+                        <input class="c-search__input" type="text" name="search" placeholder="Αναζήτηση">
+                        <button class="c-search__btn" id="submit__btn"><i class="fa fa-search" aria-hidden="hidden"></i></button>
+                    </form>
                     <!-- Nav -->
                     <nav id="nav">
                         <ul>
@@ -64,7 +71,6 @@
                         <p class="feedback_messages">{{message}}</p>
                     {% endfor %}
                 {% endif %}
-               
                 {% block content %} 
                 {% endblock %}
 
@@ -147,13 +153,6 @@
                             <h3 id="about_us" class="section-header">Ποιοί Είμαστε</h3>
                             <p class="site_desc">Αν και είναι, μάλλον, πρόδηλο, ο Στρόβιλος είναι ένα ηλεκτρονικό περιοδικό ποικίλης ύλης. Τα τρία ρήματα που βρίσκονται κάτω από το λογότυπο εκφράζουν τους πόθους, τις ανησυχίες, τις ευαισθησίες, τους φόβους και τις προσδοκίες μας. Περιστρέφεται, παλινδρομεί και επιστρέφει. Στροβιλιζόμαστε στον ωκεανό του διαδικτύου. Περίτεχνοι, επικεντρωμένοι στην ιστορία, την πολιτική, την κοινωνία,το μαύρο χιούμορ. Γράφουμε ιστορίες. Με μια φιλοδοξία: να διαβαστούν και αν έχουν ενδιαφέρον να προκαλέσουν αντιδράσεις.</p>
                             <div class="row about_us_container">
-                                <!-- <div class="6u 12u(mobile)">
-                                    <ul class="icons">
-                                        <li class="icon fa-envelope">
-                                            <a href="mailto:kgstrovilos@gmail.com?Subject=Στρόβιλος">kgstrovilos@gmail.com</a>
-                                        </li>
-                                    </ul>
-                                </div> -->
                                 <div class="6u 12u(mobile) about_us_container">
                                     <ul class="icons">
                                         <li class="icon fa-pencil">
@@ -161,6 +160,9 @@
                                         </li>
                                         <li class="icon fa-facebook">
                                             <a href="https://www.facebook.com/strovilos">facebook.com/strovilos</a>
+                                        </li>
+                                        <li id="facebook_container">
+                                            <div class="fb-page" data-href="https://www.facebook.com/strovilos" data-tabs="" data-small-header="false" data-adapt-container-width="false" data-hide-cover="false" data-show-facepile="true"><blockquote cite="https://www.facebook.com/strovilos" class="fb-xfbml-parse-ignore"><a href="https://www.facebook.com/Strovilos">Στρόβιλος</a></blockquote></div>
                                         </li>
                                     </ul>
                                 </div>
@@ -190,6 +192,17 @@
     <script src="{% static "main/assets/js/unslider.js" %}"></script>
     <script src="{% static "main/assets/js/modernizr.js" %}"></script> <!-- Modernizr -->
     {% endcompress %}
+    
+    <!-- Facebook SDK -->
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/el_GR/sdk.js#xfbml=1&version=v2.7";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+    </script>
 
     <!-- google analytics code -->
     <script>
@@ -211,7 +224,7 @@
             }
             // If form_errors are present, smoothly scroll to bottom
             {% if form_errors %}
-            scrollToAnchor('footer')
+                scrollToAnchor('footer')
             {% endif %}
             
             $(window).scroll(function(){
@@ -236,6 +249,10 @@
                 }
             });
 
+            // show the share buttons
+            var url = window.location.href;
+            var fb_share = '<iframe src="https://www.facebook.com/plugins/like.php?href='+url+'&width=210&layout=button_count&action=like&size=large&show_faces=true&share=true&height=46&appId" width="210" height="46" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true"></iframe>';
+            $('#share-fb').append(fb_share);     
 
             (function(){
                 var sticked = false;
