@@ -1,7 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
-from django import forms
 from django_batch_uploader.admin import BaseBatchUploadAdmin
 from .models import Posts, UpImages, Category, BodyText
 from .forms import PostsForm
@@ -13,29 +12,29 @@ admin.site.index_title = ' '
 
 admin.site.register(Category)
 
-# model.save() method cannot does not have access to the request data structure 
-# so this overriden method is the optimal way to change the 'uploaded_by' field 
 class UpImagesModelAdmin(BaseBatchUploadAdmin):
-    batch_url_name = "admin_image_batch_view"
-    
-    # This removes the following fields from both add and change forms
-    exclude = ['uploaded_by','image_title', 'upload_date']
-    
-    list_display = ('upload_date', 'image_title', 'thumbnail')
-    search_fields = ['image_title']
+	batch_url_name = "admin_image_batch_view"
 
-    def save_model(self, request, obj, form, change):
-        obj.uploaded_by = request.user
-        obj.save()
+	# This removes the following fields from both add and change forms
+	exclude = ['uploaded_by','image_title', 'upload_date']
+
+	list_display = ('upload_date', 'image_title', 'thumbnail')
+	search_fields = ['image_title']
+
+	def save_model(self, request, obj, form, change):
+		""" model's save() method does not have access
+		to the request so this method allows us to override
+		uploaded_by field
+		"""
+		obj.uploaded_by = request.user
+		obj.save()
 admin.site.register(UpImages, UpImagesModelAdmin)
-class UserChoiceField(forms.ModelChoiceField):
-    def label_from_instance(self, obj):
-        return obj.first_name
+
 class PostsModelAdmin(admin.ModelAdmin):
 	actions = ['publish']
 	form = PostsForm
 	# Which fields to display ( that's only for listview )
-	list_display = ('title', 'thumbnail', 'category', 'author_name', 'status', 'viewcount', 'pub_date')
+	list_display = ('title', 'thumbnail', 'category', 'author', 'status', 'viewcount', 'pub_date', 'show_link')
 	
 	# That also appears when changing the object
 	readonly_fields = ('thumbnail',)
@@ -50,22 +49,14 @@ class PostsModelAdmin(admin.ModelAdmin):
 			message_bit = "%s Άρθρα Δημοσιεύτηκαν" % rows_updated
 		self.message_user(request, "%s Επιτυχώς" % message_bit)
 	publish.short_description = 'Δημοσίευση επιλεγμένων άρθρων'
-	def formfield_for_foreignkey(self, db_field, request=None, **kwargs):
-		if db_field.name == 'author':
-			kwargs['form_class'] = UserChoiceField
-		return super(PostsModelAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
-	def author_name(self, instance):
-		return instance.author.first_name
-	author_name.short_description = 'Αρθρογράφος'
 admin.site.register(Posts, PostsModelAdmin)
 
-# This is used to make some fields available in User Admin Forms
-# Like first and last name
 admin.site.unregister(User)
-
 class UserModelAdmin(UserAdmin):
-	# This is used to forbid other users to change permissions.
-	# Therefore we hide the Permissions fields
+	""" Hiding permissions to non-superusers
+	And also making first_name and last_name available
+	upon creating a new user.
+	"""
 	dad_fieldsets = (
         (None, {'fields': ('username', 'password')}),
         (('Personal info'), {'fields': ('first_name', 'last_name', 'email')}),
@@ -97,10 +88,9 @@ class UserModelAdmin(UserAdmin):
 			return response
 		else:
 			return super(UserModelAdmin, self).change_view(request, *args, **kwargs)
-
 admin.site.register(User,UserModelAdmin)
 
 class BodyTextAdmin(admin.ModelAdmin):
-	list_display = ('text', 'author', 'pub_date')
+	list_display = ('text', 'author', 'pub_date','active', 'activate')
 	exclude = ['pub_date',]
 admin.site.register(BodyText, BodyTextAdmin)

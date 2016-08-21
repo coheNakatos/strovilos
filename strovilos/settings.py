@@ -11,6 +11,7 @@ from django.utils.translation import ugettext_lazy as _
 ######################################## Basic/Custom Settings #########################################
 ########################################################################################################
 #TODO: DEBUG / EMAIL BACKEND / COMPRESS
+
 # Custom Variables 
 POSTS_PER_PAGE = 10
 TITLE_COUNT = 10
@@ -29,7 +30,7 @@ MEDIA_URL = '/media/'
 
 
 DEBUG = False
-ALLOWED_HOSTS = ['139.59.175.70',]
+ALLOWED_HOSTS = ['strovilos.gr','www.strovilos.gr']
 
 
 # Application definition
@@ -60,7 +61,8 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'main.middleware.AdminLocaleURLMiddleware'
+    'main.middleware.AdminLocaleURLMiddleware',
+    'login_failure.middleware.RequestProvider',
 ]
 
 
@@ -110,6 +112,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
 # Cache Settings
 
 CACHE_PREFIX = 'PostViews_'
@@ -143,6 +146,12 @@ LOGGING = {
             'filename': os.path.join(ROOT_DIR, 'log/debug.log'),
             'formatter' : 'standard',
         },
+        'fail2ban_file': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(ROOT_DIR, 'log/fail2ban.log'),
+            'formatter' : 'standard',
+        },
         'huey_file': {
             'level': 'WARN',
         'class': 'logging.FileHandler',
@@ -174,6 +183,10 @@ LOGGING = {
             'handlers': ['huey_file'],
             'level': 'WARN',
             'propagate': True,
+       },
+       'fail2ban': {
+            'handlers': ['fail2ban_file'],
+            'level': 'ERROR',
        }
     },
 }
@@ -201,22 +214,22 @@ ADMIN_LANGUAGE_CODE = 'el'
 ########################################################################################################
 
 # Compress 
-COMPRESS_ENABLED = False
+
+COMPRESS_ENABLED = True
 COMPRESS_CSS_FILTERS = [
 	'compressor.filters.css_default.CssAbsoluteFilter',
 	'compressor.filters.cssmin.rCSSMinFilter',
 ]
 
 # Email Agent Setup
+
 # Uncomment this for testing
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-#EMAIL_BACKEND = "sgbackend.SendGridBackend"
-EMAIL_HOST = 'smtp.sendgrid.net'
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = "sgbackend.SendGridBackend"
 SENDGRID_USER = 'linosgian'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = SENDGRID_USER + '@sendgrip.com'
 DEFAULT_TO_EMAIL = 'kgstrovilos@gmail.com'
+
 # Huey Consumer
 
 HUEY = {
@@ -251,7 +264,7 @@ CKEDITOR_CONFIGS = {
              'items': ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote',  '-',
                        'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'Image', 'Link', 'Unlink', 'Anchor', 'HorizontalRule' ]},
             '/',
-            {'name': 'styles', 'items': ['Bold', 'Italic', 'Underline', 'RemoveFormat', 'Styles', 'Format', 'Font', 'FontSize']},
+            {'name': 'styles', 'items': ['Bold', 'Italic', 'Underline', 'RemoveFormat', 'Styles', 'Format', 'Font', 'FontSize', 'Centerizer']},
         ],
         'toolbar': 'YourCustomToolbarConfig',
          'toolbarGroups': [{ 'name': 'document', 'groups': [ 'mode', 'document', 'doctools' ] }],
@@ -277,6 +290,7 @@ CKEDITOR_CONFIGS = {
                 'dialogui',
                 'elementspath',
                 'wordcount',
+                'centerizer',
             ]),
         'removePlugins': 'smiley',
         'disableNativeSpellChecker' : False,

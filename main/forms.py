@@ -3,7 +3,10 @@ from .models import Posts, UpImages
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
 from django.db.models.fields.related import ManyToOneRel
+from django.contrib.auth.models import User
+
 class PostsForm(forms.ModelForm):
+	""" Add/Change Post form. """
 	text = forms.CharField(widget=CKEditorUploadingWidget(), label='Κείμενο')
 	# The id change on this form field is used to assist the "thumbnails.js" script
 	class Meta:
@@ -13,12 +16,9 @@ class PostsForm(forms.ModelForm):
 	class Media:
 		js=('main/assets/js/thumbnails.js',)
 
-	# This is overriding the queryset during adding/changing a post
-	def __init__(self, *args, **kwargs):
-		super(PostsForm, self).__init__(*args, **kwargs)
-		self.fields['image'].queryset = UpImages.objects.order_by('image_title')
 class ContactForm(forms.Form):
-	
+	""" Index's contact-us form. """
+
 	# Overriding the error_messages
 	greek_errors_mail = {
 		'required' : 'Αυτό το πεδίο είναι απαραίτητο',
@@ -37,3 +37,4 @@ class ContactForm(forms.Form):
 		)
 	# This is supposed to be empty.
 	pot = forms.CharField(required=False)
+

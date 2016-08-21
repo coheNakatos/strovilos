@@ -1,7 +1,7 @@
 from .models import UpImages, BodyText, Category
 from django.core.cache import cache as redis_cache
 
-def get_base_context(form_errors=None):
+def get_final_context(context, form_errors=None):
 	"""
 	This is used to obtain the basic, shared by all views, context.
 	In-Memory cache is being used to quickly access this context.
@@ -14,8 +14,9 @@ def get_base_context(form_errors=None):
 	categories = redis_cache.get('categories')
 	if not categories:
 		categories = Category.objects.all()
-		redis_cache.set('categories', categories)
-	context = {'logo': logo, 'categories': categories}
+		redis_cache.set('categories', categories, timeout=600)
+	context['logo'] = logo
+	context['categories'] = categories
 	if form_errors:
 		context['form_errors']=form_errors
 	return context
