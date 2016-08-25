@@ -91,6 +91,10 @@ STATICFILES_FINDERS = (
     'compressor.finders.CompressorFinder',
 )
 
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+]
+
 ROOT_URLCONF = 'strovilos.urls'
 WSGI_APPLICATION = 'strovilos.wsgi.application'
 

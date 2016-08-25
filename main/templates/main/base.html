@@ -3,18 +3,21 @@
 <html>
 
 <head>
-    <title>Στρόβιλος</title>
     <meta charset="utf-8" />
+    {% block title_desc %}
+        <title>Στρόβιλος</title>
+        <meta name="description" content="- Περιστρέφεται, παλινδρομεί και επιστρέφει" />
+    {% endblock %}
+
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="- Περιστρέφεται, παλινδρομεί και επιστρέφει" />
     <!-- Compressing css and js files into one minified version -->
     {% compress css %}
-    <!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
-    <link rel="stylesheet" href="{% static "main/assets/css/main.css" %}" />
-    <link rel="stylesheet" href="{% static "main/assets/css/custom.css" %}" />
-    <link rel="stylesheet" href="{% static "main/assets/css/unslider-dots.css" %}" />
-    <link rel="stylesheet" href="{% static "main/assets/css/unslider.css" %}" />
-    <link rel="stylesheet" href="{% static "main/assets/css/pagination/style.css" %}"> <!-- Resource style -->
+        <!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+        <link rel="stylesheet" href="{% static "main/assets/css/main.css" %}" />
+        <link rel="stylesheet" href="{% static "main/assets/css/custom.css" %}" />
+        <link rel="stylesheet" href="{% static "main/assets/css/unslider-dots.css" %}" />
+        <link rel="stylesheet" href="{% static "main/assets/css/unslider.css" %}" />
+        <link rel="stylesheet" href="{% static "main/assets/css/pagination/style.css" %}"> <!-- Resource style -->
     {% endcompress %}
     <link href="https://fonts.googleapis.com/css?family=GFS+Didot|Noto+Sans&subset=greek" rel="stylesheet">
     <!--[if lte IE 8]><link rel="stylesheet" href="{% static "main/assets/css/ie8.css" %}"/><![endif]-->
@@ -46,7 +49,6 @@
                     <h1 id="logo"> <a href="/"><img id="logo-image" src="{{ logo.image.url }}"></a> </h1>
                      <!-- Temporary search-form -->
                     <form class="c-search" action="/search" method="get">
-                        {% csrf_token %}
                         <input class="c-search__input" type="text" name="search" placeholder="Αναζήτηση">
                         <button class="c-search__btn" id="submit__btn"><i class="fa fa-search" aria-hidden="hidden"></i></button>
                     </form>
@@ -192,7 +194,8 @@
     <script src="{% static "main/assets/js/unslider.js" %}"></script>
     <script src="{% static "main/assets/js/modernizr.js" %}"></script> <!-- Modernizr -->
     {% endcompress %}
-    
+    <!-- End Scripts -->
+
     <!-- Facebook SDK -->
     <div id="fb-root"></div>
     <script>(function(d, s, id) {

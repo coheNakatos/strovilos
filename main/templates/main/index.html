@@ -1,6 +1,13 @@
 {% extends 'main/base.html' %}
 {% load custom_filters %}
-
+{% block extra_head %}
+    <meta property="og:url"         content="https://strovilos.gr{{ request.path }}" />
+    <meta property="og:title"       content="Στρόβιλος - Περιστρέφεται, παλινδρομεί και επιστρέφει"/>
+    <meta property="og:description" content="Αν και είναι, μάλλον, πρόδηλο, ο Στρόβιλος είναι ένα ηλεκτρονικό περιοδικό ποικίλης ύλης. Τα τρία ρήματα που βρίσκονται κάτω από το λογότυπο εκφράζουν τους πόθους, τις ανησυχίες, τις ευαισθησίες, τους φόβους και τις προσδοκίες μας. Περιστρέφεται, παλινδρομεί και επιστρέφει. Στροβιλιζόμαστε στον ωκεανό του διαδικτύου. Περίτεχνοι, επικεντρωμένοι στην ιστορία, την πολιτική, την κοινωνία,το μαύρο χιούμορ. Γράφουμε ιστορίες. Με μια φιλοδοξία: να διαβαστούν και αν έχουν ενδιαφέρον να προκαλέσουν αντιδράσεις." />
+    <!-- TODO: Create Custom context processor to supply the domain when deployed -->
+    <meta property="og:image"       content="https://strovilos.gr{{ posts_paginated.1.image.image.url }}" />
+    <meta property="og:site_name"   content="Στρόβιλος - Περιστρέφεται, παλινδρομεί και επιστρέφει"/>
+{% endblock %}
 {% block content %}
 <!-- Latest Posts / Slider -->
 <div class="row clearfix">

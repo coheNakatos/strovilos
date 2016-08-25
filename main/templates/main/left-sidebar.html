@@ -1,15 +1,22 @@
 {% extends 'main/base.html' %}
 {% load custom_filters %}
 
+{% block title_desc %}
+    <title>Στρόβιλος - {{main_post.title|truncatechars:40}}</title>
+    <meta name="description" content="{{ main_post.text|safe|striptags|truncatewords:9 }}" />
+{% endblock %}
+
 {% block extra_head %}
-    <meta property="og:url"		content="https://strovilos{{ request.path }}" />
+    <meta property="og:url"         content="https://strovilos.gr{{ request.path }}" />
     <meta property="og:type"		content="article" />
     <meta property="og:title"		content="{{ main_post.title }}"/>
-    <meta property="og:description"	content="{{ main_post.text|safe|striptags|truncatewords:20 }}" />
+    <meta property="og:description"	content="{{ main_post.text|safe|striptags|truncatewords:70 }}" />
 	<!-- TODO: Create Custom context processor to supply the domain when deployed -->
     <meta property="og:image"		content="https://strovilos.gr{{ main_post.image.image.url }}" />
     <meta property="article:author"	content="https://www.facebook.com/profile.php?id=100008762674761" />
-    <meta property="og:site_name"	content="Strovilos"/>
+    <meta property="og:site_name"	content="Στρόβιλος - Περιστρέφεται, παλινδρομεί και επιστρέφει"/>
+    <meta property="og:image:width" content="{{ main_post.image.image.width }}" ">
+    <meta property="og:image:height" content="{{ main_post.image.image.height }}" ">
 {% endblock %}
 
 {% block extra_admin_nav %}
