@@ -13,7 +13,7 @@ logger = logging.getLogger('main')
 
 class UpImages(models.Model):
     image = models.ImageField(blank=False, upload_to='images/%Y/%m/%d/', max_length=250)
-    uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    uploaded_by = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     image_title = models.CharField(blank=True, max_length=255, verbose_name='Τίτλος')
     upload_date = models.DateTimeField('Ημερομηνία Ανάρτησης', default=datetime.datetime.now)
 
@@ -32,7 +32,7 @@ class UpImages(models.Model):
         super(UpImages, self).save(*args, **kwargs)
         imagepath = self.image.path
         image = Image.open(imagepath)
-        image.save(imagepath, "JPEG", quality=20)
+        #image.save(imagepath, "JPEG", quality=30)
     
     
     class Meta:
@@ -54,11 +54,11 @@ class Posts(models.Model):
         ('d', 'Πρόχειρο'),
     )
     text = RichTextField("Κείμενο", blank=False)
-    pub_date = models.DateField('Ημερομηνία Ανάρτησης', default=datetime.date.today)
-    image = models.ForeignKey(UpImages, on_delete=models.SET_NULL, null=True, verbose_name='Εικόνα')
-    title = models.CharField('Τίτλος' ,max_length=255)
-    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Αρθρογράφος')
-    category = models.ForeignKey(Category,default=0, on_delete=models.CASCADE, verbose_name='Κατηγορία', blank=False)
+    pub_date = models.DateField('Ημερομηνία Ανάρτησης', default=datetime.date.today, null=True, blank=True)
+    image = models.ForeignKey(UpImages, on_delete=models.SET_NULL,null=True, blank=True, verbose_name='Εικόνα')
+    title = models.CharField('Τίτλος' ,max_length=255, null=True, blank=True)
+    author = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name='Αρθρογράφος', null=True, blank=True)
+    category = models.ForeignKey(Category,default=0, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Κατηγορία')
     status = models.CharField('Κατάσταση', max_length=1, choices=STATUS_CHOICES, default='d')
     viewcount = models.IntegerField('Αριθμός Προβολών', default=0)
     
