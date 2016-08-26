@@ -34,7 +34,7 @@ class PostsModelAdmin(admin.ModelAdmin):
 	actions = ['publish']
 	form = PostsForm
 	# Which fields to display ( that's only for listview )
-	list_display = ('title', 'thumbnail', 'category', 'author', 'status', 'viewcount', 'pub_date', 'show_link')
+	list_display = ('__str__', 'thumbnail', 'category', 'author', 'status', 'viewcount', 'pub_date', 'show_link')
 	
 	# That also appears when changing the object
 	readonly_fields = ('thumbnail',)

@@ -14,7 +14,7 @@ logger = logging.getLogger('main')
 class UpImages(models.Model):
     image = models.ImageField(blank=False, upload_to='images/%Y/%m/%d/', max_length=250)
     uploaded_by = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
-    image_title = models.CharField(blank=True, max_length=255, verbose_name='Τίτλος')
+    image_title = models.CharField(blank=True, unique=True, max_length=255, verbose_name='Τίτλος')
     upload_date = models.DateTimeField('Ημερομηνία Ανάρτησης', default=datetime.datetime.now)
 
 
@@ -64,7 +64,9 @@ class Posts(models.Model):
     
     
     def thumbnail(self):
-        return u'<img src="%s" id="thumb" style="max-width:150px; height:auto; max-height:150px;" />' % self.image.image.url
+        if self.image:
+            return u'<img src="%s" id="thumb" style="max-width:150px; height:auto; max-height:150px;" />' % self.image.image.url
+        return "Δεν υπάρχει φωτογραφία"
     thumbnail.short_description = 'Εικόνα Κειμένου'
     thumbnail.allow_tags = True
     
@@ -74,7 +76,9 @@ class Posts(models.Model):
     show_link.short_description = "-"
     
     def __str__(self):
-        return self.title
+        if self.title:
+            return self.title
+        return "Δεν υπάρχει τίτλος"
 
     def get_absolute_url(self):
         return reverse('main:articles', args=(self.id,))

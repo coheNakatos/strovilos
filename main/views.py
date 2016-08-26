@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist,MultipleObjectsReturned
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import user_passes_test
 from django.views.decorators.http import require_safe
@@ -14,7 +14,7 @@ from .models import Posts, UpImages, Category, BodyText
 from .tasks import increasecnt, async_mail
 from .utils import get_final_context
 from strovilos import settings
-import logging
+import logging, os
 
 logger = logging.getLogger('main')
 #####################################################
@@ -199,7 +199,14 @@ def feed_ajax(request):
 	using ajax requests.
 	"""
 	image_title = request.GET['title']
-	image = get_object_or_404(UpImages, image_title=image_title)
+	try:
+		image = UpImages.objects.get(image_title=image_title)
+		if not os.path.exists(image.image.path):
+			return HttpResponse(status=404)
+	except ObjectDoesNotExist:
+		return HttpResponse(status=404)		
+	except MultipleObjectsReturned:
+		return HttpResponse(status=410)
 	return HttpResponse(image.image.url)
 
 
