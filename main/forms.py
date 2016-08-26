@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 class PostsForm(forms.ModelForm):
 	""" Add/Change Post form. """
 	text = forms.CharField(widget=CKEditorUploadingWidget(), label='Κείμενο')
-	# The id change on this form field is used to assist the "thumbnails.js" script
+
 	class Meta:
 		model = Posts
 		exclude = ['viewcount']

@@ -25,7 +25,7 @@ def viewcountupdate():
 	# This is the prefix we are going to use to distinguish the cache keys
 	# we need for the view counters
 	PREFIX = settings.CACHE_PREFIX
-	logger.info('Entering viewcountupdate...')
+	logger.warn('Entering viewcountupdate...')
 	with redis_cache.lock('lock'):
 		keys = redis_cache.keys(PREFIX + "*")
 		if keys:
@@ -44,9 +44,10 @@ def viewcountupdate():
 						logger.warn('Updated: id = {0}. Oldcount = {1} -> Newcount = {2} '.format(post_id, old_viewcount, new_viewcount))
 						post.save(update_fields=['viewcount'])
 			except IntegrityError:
+				logger.warn('Rolling back...')
 				transaction.rollback()
 			redis_cache.delete_pattern(PREFIX + "*")
-	logger.info('Exiting viewcountupdate...')
+	logger.warn('Exiting viewcountupdate...')
 
 
 @huey.task()
