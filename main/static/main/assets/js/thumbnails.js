@@ -8,7 +8,7 @@ $(document).ready( function ()
 		if (option !== "---------" ){ 
 			$.ajax({
 				type: "GET",
-				url:"/ajax?title="+option,
+				url:"/ajax/get-title?title="+option,
 	            success:function(result) {
 					if ($('#thumb').length){
 						$('#thumb').attr('src',result);

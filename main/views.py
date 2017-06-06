@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.db.models import Q
+from django.db import transaction, IntegrityError
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist,MultipleObjectsReturned
@@ -10,11 +11,11 @@ from django.views.decorators.http import require_safe
 
 from django_batch_uploader.views import AdminBatchUploadView
 from .forms import ContactForm
-from .models import Posts, UpImages, Category, BodyText
+from .models import *
 from .tasks import increasecnt, async_mail
 from .utils import get_final_context
 from strovilos import settings
-import logging, os
+import logging, os, json
 
 logger = logging.getLogger('main')
 #####################################################
@@ -26,6 +27,19 @@ def index(request, category_id=None):
 	error/success message output when
 	submiting the email form 
 	"""
+	if request.is_ajax():
+		if category_id:
+			posts = Posts.objects.filter(category=category_id).exclude(status='d').order_by('-viewcount')
+			main_title = Category.objects.get(pk=category_id)
+		else:
+			posts = Posts.objects.exclude(Q(status='d')).order_by('-viewcount')
+			main_title = "Στρόβιλος"
+		posts_paginated = paginate_posts(request, posts)
+		cntx = {
+			'posts_paginated'	: posts_paginated,
+			'main_title'		: main_title,
+		}
+		return render(request, 'main/async.html', cntx)
 	form_errors = None
 	if request.method == 'POST':
 		form = ContactForm(data=request.POST)
@@ -109,9 +123,16 @@ def authors(request, author_id):
 	main_title = "Αρθρογράφος: "+ author.first_name + " " + author.last_name
 	
 	posts = Posts.objects.filter(author__id=author_id).exclude(status='d').order_by('-viewcount')
-	latest_posts = list(Posts.objects.filter(author__id=author_id).exclude(status='d')[:5])
-	
 	posts_paginated = paginate_posts(request, posts)
+	
+	if request.is_ajax():
+		cntx = {
+			'posts_paginated'	: posts_paginated,
+			'main_title'		: main_title,
+		}
+		return render(request, 'main/async.html', cntx)
+	
+	latest_posts = list(Posts.objects.filter(author__id=author_id).exclude(status='d')[:5])
 	try:
 		quote = BodyText.objects.get(active=True)
 	except ObjectDoesNotExist:
@@ -148,8 +169,10 @@ def secret_articles(request):
 
 def about(request):
 	latest_posts = Posts.objects.exclude(status='d')[:3]
+	bios = Bios.objects.all()
 	view_context = {
-		'latest_posts' : latest_posts,
+		'latest_posts' 	: latest_posts,
+		'bios'			: bios,
 	}
 	 
 	final_context = get_final_context(view_context)
@@ -193,7 +216,8 @@ def activate(request):
 	quote.save()
 	return HttpResponseRedirect('/admin/main/bodytext/')
 
-def feed_ajax(request):
+
+def get_title(request):
 	"""This is used to dynamically change
 	the thumbnails on Posts' change form,
 	using ajax requests.
@@ -209,7 +233,21 @@ def feed_ajax(request):
 		return HttpResponse(status=410)
 	return HttpResponse(image.image.url)
 
-
+def update_cvs(request):
+	if request.is_ajax() and request.method == 'POST':
+		body_unicode = request.body.decode('utf-8')
+		json_data = json.loads(body_unicode)
+		keys = list(json_data.keys())
+		try:
+			with transaction.atomic():
+				bios = Bios.objects.filter(position__in=keys)
+				for bio in bios:
+					bio.position = json_data[str(bio.position)]
+					bio.save()
+					logger.warn("updated")
+		except IntegrityError:
+			transaction.rollback()
+	return HttpResponse()
 class ImageBatchView(AdminBatchUploadView):      
 	""" Bulk Image Uploading. """
 

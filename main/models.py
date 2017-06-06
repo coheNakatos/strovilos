@@ -2,11 +2,11 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils.html import mark_safe
 from django.core.urlresolvers import reverse
+from django.core.exceptions import ObjectDoesNotExist
 
 from ckeditor.fields import RichTextField
 from bs4 import BeautifulSoup
 from PIL import Image
-
 import html, datetime, logging
 
 logger = logging.getLogger('main')
@@ -14,7 +14,7 @@ logger = logging.getLogger('main')
 class UpImages(models.Model):
     image = models.ImageField(blank=False, upload_to='images/%Y/%m/%d/', max_length=250)
     uploaded_by = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
-    image_title = models.CharField(blank=True, unique=True, max_length=255, verbose_name='Τίτλος')
+    image_title = models.CharField(blank=True, max_length=255, verbose_name='Τίτλος')
     upload_date = models.DateTimeField('Ημερομηνία Ανάρτησης', default=datetime.datetime.now)
 
 
@@ -32,7 +32,7 @@ class UpImages(models.Model):
         super(UpImages, self).save(*args, **kwargs)
         imagepath = self.image.path
         image = Image.open(imagepath)
-        #image.save(imagepath, "JPEG", quality=30)
+        image.save(imagepath, "JPEG", quality=30)
     
     
     class Meta:
@@ -116,7 +116,38 @@ class BodyText(models.Model):
         verbose_name_plural = "Παραφορές"
         verbose_name = "Παραφορά"
 
+# Avoid circular imports
+from .utils import truncate
 
+class Bios(models.Model):
+    def get_number():
+        num = Bios.objects.count()
+        if num:
+            return num + 1
+        # Case : no objects are present in the db.
+        # Then return 1.
+        return 1
+    author_name = models.CharField(max_length=50, blank=False, verbose_name="Όνομα")
+    author_cv   = models.TextField(blank=False, verbose_name="Βιογραφικό")
+    position    = models.IntegerField(verbose_name="Αριθμός Θέσης", default=get_number) 
+    minified_cv = models.CharField(max_length=255, blank=True, verbose_name="Βιογραφικό")
+    
+    def __str__(self):
+        return self.author_name
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            try:
+                curr_bios = Bios.objects.get(position=self.position)
+                curr_bios.position = Bios.get_number()
+                curr_bios.save()
+            except ObjectDoesNotExist:
+                pass
+        self.minified_cv = truncate(self.author_cv)
+        super(Bios, self).save(*args, **kwargs)
+    class Meta:
+        ordering = ["position",]
+        verbose_name = "Βιογραφικό"
+        verbose_name_plural = "Βιογραφικά"
 
 # Overring User's str method
 def user_str_patch(self):

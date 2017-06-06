@@ -1,5 +1,5 @@
 {% extends 'main/base.html' %}
-{% load custom_filters %}
+{% load custom_filters static %}
 {% block extra_head %}
     <meta property="og:url"         content="https://strovilos.gr{{ request.path }}" />
     <meta property="og:title"       content="Στρόβιλος - Περιστρέφεται, παλινδρομεί και επιστρέφει"/>
@@ -70,7 +70,7 @@
     <!-- Pagination -->
     {% if not posts_paginated.paginator.num_pages == 1 %}
         <section>
-            <nav role="navigation">
+            <nav id="pagination" role="navigation">
                 <ul class="cd-pagination no-space custom-buttons">
                     {% if not posts_paginated.has_previous %}
                         <li class="button"><a class="disabled" href="#">Prev</a></li>
@@ -99,4 +99,8 @@
             </nav> 
         </section>
     {% endif %}
+{% endblock %}
+
+{% block extra_javascript %}
+    <script src="{% static "main/assets/js/ajaxreqs.js" %}"></script>
 {% endblock %}

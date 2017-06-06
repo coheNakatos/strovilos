@@ -1,0 +1,12 @@
+.about__wrapper:hover{
+	opacity: 0.7;
+}
+#button{
+	width: auto;
+}
+.ui-sortable{
+	position: static;
+	float: none; 
+	clear: none; 
+	width: auto; 
+}

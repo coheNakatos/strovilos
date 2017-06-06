@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 from django_batch_uploader.admin import BaseBatchUploadAdmin
-from .models import Posts, UpImages, Category, BodyText
+from .models import *
 from .forms import PostsForm
 
 import logging
@@ -94,3 +94,9 @@ class BodyTextAdmin(admin.ModelAdmin):
 	list_display = ('text', 'author', 'pub_date','active', 'activate')
 	exclude = ['pub_date',]
 admin.site.register(BodyText, BodyTextAdmin)
+
+class BiosAdmin(admin.ModelAdmin):
+	change_list_template = 'main/bios_changelist.html'
+	exclude = ['minified_cv']
+	list_display = ('author_name', 'position', 'minified_cv',)
+admin.site.register(Bios, BiosAdmin)

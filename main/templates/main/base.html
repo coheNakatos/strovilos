@@ -77,7 +77,6 @@
                 {% endblock %}
 
                 <!-- Footer Anchor. Used When Errors Are Present -->
-                <a name="footer"> </a>
                 {% block pagination %}
                 {% endblock %}
             </div>
@@ -86,6 +85,7 @@
 
         <!-- Footer -->
         <div id="footer-wrapper">            
+            <a name="footer"> </a>
             <div id="footer" class="container">
                 <header>
                     <h2>Έχετε Ερωτήσεις ή Σχόλια; <strong>Επικοινωνήστε:</strong></h2>
@@ -195,7 +195,10 @@
     <script src="{% static "main/assets/js/modernizr.js" %}"></script> <!-- Modernizr -->
     {% endcompress %}
     <!-- End Scripts -->
+    {% block extra_javascript %}
+    {% endblock %}
 
+    
     <!-- Facebook SDK -->
     <div id="fb-root"></div>
     <script>(function(d, s, id) {
@@ -217,7 +220,6 @@
         ga('create', 'UA-82164161-1', 'auto');
         ga('send', 'pageview');
     </script>
-
     <script>
 
         jQuery(document).ready(function($) {

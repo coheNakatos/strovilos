@@ -29,8 +29,11 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
 
-DEBUG = False
-ALLOWED_HOSTS = ['strovilos.gr','www.strovilos.gr']
+DEBUG = True
+if DEBUG:
+    ALLOWED_HOSTS = []
+else:
+    ALLOWED_HOSTS = ['strovilos.gr','www.strovilos.gr']
 
 
 # Application definition
@@ -79,7 +82,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.template.context_processors.static',
                 'main.context_processors.global_settings',
-		'django.core.context_processors.request',
+		        'django.core.context_processors.request',
             ],
         },
     },
@@ -218,8 +221,8 @@ ADMIN_LANGUAGE_CODE = 'el'
 ########################################################################################################
 
 # Compress 
+COMPRESS_ENABLED = False if DEBUG else True
 
-COMPRESS_ENABLED = True
 COMPRESS_CSS_FILTERS = [
 	'compressor.filters.css_default.CssAbsoluteFilter',
 	'compressor.filters.cssmin.rCSSMinFilter',
