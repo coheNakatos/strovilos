@@ -1,4 +1,4 @@
-from django.template.defaultfilters import truncatewords, stringfilter, removetags
+from django.template.defaultfilters import truncatewords_html, stringfilter, removetags
 from django import template
 from django.utils.safestring import mark_safe
 
@@ -8,7 +8,7 @@ register = template.Library()
 # TODO: ADD remove tags!
 @register.filter
 def trunc(value, arg):
-	return truncatewords(removetags(mark_safe(value), 'img h3 h1 h2 h4 h5 h6 strong em b u i blockquote span'), arg) 
+	return truncatewords_html(removetags(mark_safe(value), 'img h3 h1 h2 h4 h5 h6 strong em b u i blockquote span small p'), arg) 
 
 @register.filter
 @stringfilter
